@@ -1,4 +1,4 @@
-name: inf_dim_fw
+name: open_loop_fw
 channels:
   - defaults
   - conda-forge
