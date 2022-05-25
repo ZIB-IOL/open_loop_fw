@@ -1,0 +1,10 @@
+# idea
+.idea
+
+# optimized
+__pycache__/
+../__pycache__
+*.py[cod]
+
+
+
