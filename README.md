@@ -1,4 +1,4 @@
-# Acceleration of Frank-Wolfe Algorithms with Open Loop Step-Sizes
+# Acceleration of Frank-Wolfe algorithms with open loop step-sizes
 
 ## Installation guide
 
