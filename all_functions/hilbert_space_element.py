@@ -146,9 +146,6 @@ class ElementMarginalPolytope:
     def check_points_are_in_feasibility_region(self):
         assert (0 <= self.points).all() & (self.points <= 1).all(), "Points have to be in [0, 1]."
 
-    # def copy(self):
-    #     return ElementMarginalPolytope(weights=self.weights, points=self.points)
-
 
 def bp(y: float, degree: int = 2):
     """Evaluates the Bernoulli polynomial of given degree at y.
