@@ -22,12 +22,12 @@ for rho in rhos:
     for dimension in dimensions:
         if rho == 2:
             file_name = "locally_accelerated_convergence_rate_exterior"
-            constraint_set, objective_function = polytope_experiment(dimension, rho)
+            feasible_region, objective_function = polytope_experiment(dimension, rho)
         elif rho == -1:
             file_name = "locally_accelerated_convergence_rate_interior"
-            constraint_set, objective_function = probability_simplex_interior_fast_ls_ss(dimension)
+            feasible_region, objective_function = probability_simplex_interior_fast_ls_ss(dimension)
 
-        primal_gaps, _ = run_experiment(iterations + n_iterates, objective_function, constraint_set,
+        primal_gaps, _ = run_experiment(iterations + n_iterates, objective_function, feasible_region,
                                         run_more=int(60 * iterations),
                                         fw_step_size_rules=fw_step_size_rules)
         primal_gaps = primal_gaps[0]

@@ -6,7 +6,7 @@ from all_functions.objective_function import SquaredLossFinDim
 
 def polytope_experiment(dimension: int, rho: float):
     """Creates a problem setting for which FW with ls and ss converge linearly or sublinearly and FW with ol
-    converges at a rate of 1/t² after a certain number of ITERATIONS. Specificaly,
+    converges at a rate of 1/t² after a certain number of iterations. Specificaly,
         f(x) = 1/2 ||x-b||_2^2,
         where b = rho (0, ... , 0, 1, ... 1)^T,
 
@@ -25,13 +25,13 @@ def polytope_experiment(dimension: int, rho: float):
     b = b * rho
 
     objective_function = SquaredLossFinDim(A=A, b=b)
-    constraint_set = UnitSimplex(dimension=dimension)
-    return constraint_set, objective_function
+    feasible_region = UnitSimplex(dimension=dimension)
+    return feasible_region, objective_function
 
 
 def probability_simplex_interior_fast_ls_ss(dimension):
     """Creates a problem setting for which FW with ls and ss converge linearly and FW with ol
-    converges at a rate of 1/t² after a certain number of ITERATIONS. Specificaly,
+    converges at a rate of 1/t² after a certain number of iterations. Specificaly,
         f(x) = 1/2 ||x-b||_2^2,
         where b = (1/dimension, ... , 1/dimension, ... 1/dimension)^T,
 
@@ -46,13 +46,13 @@ def probability_simplex_interior_fast_ls_ss(dimension):
     b = b / lpnorm(b, p=1)
 
     objective_function = SquaredLossFinDim(A=A, b=b)
-    constraint_set = UnitSimplex(dimension=dimension)
-    return constraint_set, objective_function
+    feasible_region = UnitSimplex(dimension=dimension)
+    return feasible_region, objective_function
 
 
 def uniformly_convex(dimension, p=2, location: str = "interior", convexity: str = "strong"):
     """Creates a problem setting for which FW with ls and ss converge linearly and FW with ol
-    converges at a rate of 1/t² after a certain number of ITERATIONS. Specificaly,
+    converges at a rate of 1/t² after a certain number of iterations. Specificaly,
         f(x) = 1/2 ||x-b||_2^2,
         where b is a non-sparse random vector.
 
@@ -85,11 +85,11 @@ def uniformly_convex(dimension, p=2, location: str = "interior", convexity: str 
     b = A.dot(x)
 
     objective_function = SquaredLossFinDim(A=A, b=b)
-    constraint_set = LpBall(dimension=dimension, p=p)
+    feasible_region = LpBall(dimension=dimension, p=p)
 
     if location == "exterior":
         L = objective_function.L
         alpha = 1
         lmbda = np.linalg.norm(b) - 1
         cst = (alpha * lmbda) / (2 * L)
-    return constraint_set, objective_function, cst
+    return feasible_region, objective_function, cst

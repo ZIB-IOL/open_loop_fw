@@ -4,14 +4,14 @@ from all_functions.feasible_region import away_oracle, vertex_among_active_verti
 import numpy as np
 
 
-def frank_wolfe(constraint_set,
+def frank_wolfe(feasible_region,
                 objective_function,
                 step: dict,
                 n_iters: int = 100):
-    """Performs conditional gradients/the herding algorithm.
+    """Performs Frank-Wolfe/the herding algorithm.
 
         Args:
-            constraint_set:
+            feasible_region:
                 The type of feasible region.
             objective_function: Optional
                 The type of objective function.
@@ -23,9 +23,9 @@ def frank_wolfe(constraint_set,
                     For "open loop", provide integer values for the keys "a", "b", "c" that affect the step type as
                     follows: a / (b * iteration + c)
                     For "line search", provide an integer for the number of exhaustive search steps for the key
-                    "number of ITERATIONS for line search".
+                    "number of iterations for line search".
             n_iters: integer, Optional
-                The number of ITERATIONS we run the herding algorithm for. (Default is 100.)
+                The number of iterations. (Default is 100.)
 
         Returns:
             iterate_list: list
@@ -40,11 +40,11 @@ def frank_wolfe(constraint_set,
                 Returns a list containing the values of ||x_t - p_t|| at each iteration.
 
         References:
-            "Marguerite Frank, Philip Wolfe, et al. An algorithm for quadratic programming. Naval research logistics
+            [1] "Marguerite Frank, Philip Wolfe, et al. An algorithm for quadratic programming. Naval research logistics
             quarterly, 3(1-2):95–110, 1956."
     """
 
-    x = constraint_set.initial_point()
+    x = feasible_region.initial_point()
     loss_list = []
     fw_gap_list = []
     iterate_list = []
@@ -53,14 +53,14 @@ def frank_wolfe(constraint_set,
     for i in range(1, n_iters):
         if isinstance(x, np.ndarray):
             gradient = objective_function.evaluate_gradient(x)
-            p_fw, fw_gap, x_p = constraint_set.linear_minimization_oracle(gradient, x)
+            p_fw, fw_gap, x_p = feasible_region.linear_minimization_oracle(gradient, x)
             x_p_list.append(x_p)
             try:
                 scalar = objective_function.compute_step_size(i, x, p_fw, gradient, step=step)
             except:
                 break
         else:
-            p_fw, fw_gap = constraint_set.linear_minimization_oracle(objective_function, x)
+            p_fw, fw_gap = feasible_region.linear_minimization_oracle(objective_function, x)
             scalar = objective_function.compute_step_size(i, x, p_fw, step=step)
         if isinstance(x, np.ndarray):
             x = (1 - scalar) * x.flatten() + scalar * p_fw.flatten()
@@ -75,21 +75,21 @@ def frank_wolfe(constraint_set,
     return iterate_list, loss_list, fw_gap_list, x, x_p_list
 
 
-def away_step_frank_wolfe(constraint_set,
+def away_step_frank_wolfe(feasible_region,
                           objective_function,
                           step: dict,
                           n_iters: int = 100):
     """Performs Away-Step Frank-Wolfe.
 
         Args:
-            constraint_set:
+            feasible_region:
                 The type of feasible region.
             objective_function: Optional
                 The type of objective function.
             step: dict
                 A dictionnary containing the information about the step-size rule.
             n_iters: integer, Optional
-                The number of ITERATIONS we run the herding algorithm for. (Default is 100.)
+                The number of iterations. (Default is 100.)
 
         Returns:
             iterate_list: list
@@ -104,13 +104,13 @@ def away_step_frank_wolfe(constraint_set,
                 Returns a list containing the values of ||x_t - p_t|| at each iteration.
 
         References:
-            "Simon Lacoste-Julien and Martin Jaggi. On the global linear convergence of frank-wolfe optimization
+            [1] "Simon Lacoste-Julien and Martin Jaggi. On the global linear convergence of frank-wolfe optimization
             variants. arXiv preprint arXiv:1511.05932, 2015."
     """
 
-    x = constraint_set.initial_point().flatten()
+    x = feasible_region.initial_point().flatten()
     L = objective_function.L
-    diameter = constraint_set.diameter
+    diameter = feasible_region.diameter
     active_vertices = fd(x)
     lambdas = np.array([[1.0]])
     loss_list = []
@@ -121,7 +121,7 @@ def away_step_frank_wolfe(constraint_set,
 
     for i in range(1, n_iters):
         gradient = objective_function.evaluate_gradient(x).flatten()
-        p_fw, fw_gap, x_p = constraint_set.linear_minimization_oracle(gradient, x)
+        p_fw, fw_gap, x_p = feasible_region.linear_minimization_oracle(gradient, x)
         direction_fw = p_fw.flatten() - x.flatten()
         p_a, index_a = away_oracle(active_vertices, gradient)
         direction_a = x.flatten() - p_a.flatten()
@@ -199,22 +199,22 @@ def away_step_frank_wolfe(constraint_set,
     return iterate_list, loss_list, fw_gap_list, x, x_p_list
 
 
-def decomposition_invariant_frank_wolfe(constraint_set,
+def decomposition_invariant_frank_wolfe(feasible_region,
                                         objective_function,
                                         step: dict,
                                         n_iters: int = 100,
                                         epsilon: float = 1e-16):
-    """Performs decomposition invariant Frank-Wolfe.
+    """Performs Decomposition-Invariant Frank-Wolfe.
 
         Args:
-            constraint_set:
+            feasible_region:
                 The type of feasible region.
             objective_function:
                 The type of objective function.
             step: dict
                 A dictionnary containing the information about the step-size rule.
             n_iters: integer, Optional
-                The number of ITERATIONS we run the herding algorithm for. (Default is 100.)
+                The number of iterations. (Default is 100.)
             epsilon: float, Optional
                 Used as a tolerance in the construction of gradient tilde.
 
@@ -231,14 +231,14 @@ def decomposition_invariant_frank_wolfe(constraint_set,
                 Returns a list containing the values of ||x_t - p_t|| at each iteration.
 
         References:
-            "Dan Garber and Ofer Meshi. Linear-memory and decomposition-invariant linearly convergent conditional
+            [1] "Dan Garber and Ofer Meshi. Linear-memory and decomposition-invariant linearly convergent conditional
             gradient algorithm for structured polytopes. Advances in neural information processing systems,
             29:1001–1009, 2016."
     """
 
-    x = constraint_set.initial_point()
+    x = feasible_region.initial_point()
     gradient = objective_function.evaluate_gradient(x)
-    x, _, _ = constraint_set.linear_minimization_oracle(gradient, x)
+    x, _, _ = feasible_region.linear_minimization_oracle(gradient, x)
     loss_list = []
     fw_gap_list = []
     iterate_list = []
@@ -248,8 +248,8 @@ def decomposition_invariant_frank_wolfe(constraint_set,
         gradient = objective_function.evaluate_gradient(x)
         gradient_difw = gradient.copy()
         gradient_difw[:, np.newaxis][(np.abs(x) <= epsilon)] = - 1e+16
-        p, fw_gap, x_p = constraint_set.linear_minimization_oracle(gradient, x)
-        p_difw, _, _ = constraint_set.linear_minimization_oracle(-gradient_difw, x)
+        p, fw_gap, x_p = feasible_region.linear_minimization_oracle(gradient, x)
+        p_difw, _, _ = feasible_region.linear_minimization_oracle(-gradient_difw, x)
         direction = (p - p_difw).flatten()
         x_p_list.append(x_p)
         try:

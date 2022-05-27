@@ -24,7 +24,7 @@ for p in ps:
     if p == ps[-1]:
         legend = True
     file_name = "Lp" + "_" + str(p) + "_ball_" + "location" + "_" + str(location)
-    constraint_set, objective_function, cst = uniformly_convex(DIMENSION, p=p, location=location, convexity=convexity)
+    feasible_region, objective_function, cst = uniformly_convex(DIMENSION, p=p, location=location, convexity=convexity)
 
     fw_step_size_rules = [
         {"step type": "line search"},
@@ -35,7 +35,7 @@ for p in ps:
         {"step type": "open loop", "a": 6, "b": 1, "c": 6, "d": 1},
         {"step type": "open loop constant", "cst": cst}
     ]
-    primal_gaps, labels = run_experiment(ITERATIONS, objective_function, constraint_set, run_more=RUN_MORE,
+    primal_gaps, labels = run_experiment(ITERATIONS, objective_function, feasible_region, run_more=RUN_MORE,
                                          fw_step_size_rules=fw_step_size_rules)
     primal_gaps = only_min(primal_gaps)
     primal_gap_plotter(y_data=primal_gaps,

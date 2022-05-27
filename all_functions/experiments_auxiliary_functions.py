@@ -37,21 +37,20 @@ def translate_step_types(current_label, step):
 
 def run_experiment(iterations,
                    objective_function,
-                   constraint_set,
+                   feasible_region,
                    run_more: int = 0,
                    fw_step_size_rules: list = [],
                    difw_step_size_rules: list = [],
                    afw_step_size_rules: list = []
                    ):
     """
-    Minimizes objective_function over constraint_set using fw_step_type
+    Minimizes objective_function over feasible_region.
 
     Args:
         iterations: int
-            The number of ITERATIONS.
-            (Default is (100, 50).)
+            The number of iterations.
         objective_function
-        constraint_set
+        feasible_region
         run_more: int, Optional
             Number of additional ITERATIONS to run to determine f(x*). (Default is 0.)
         fw_step_size_rules: list
@@ -69,7 +68,7 @@ def run_experiment(iterations,
     for step in fw_step_size_rules:
         current_label = translate_step_types("FW", step)
 
-        iterate_list, loss_list, fw_gap_list, x, x_p_list = frank_wolfe(constraint_set=constraint_set,
+        iterate_list, loss_list, fw_gap_list, x, x_p_list = frank_wolfe(feasible_region=feasible_region,
                                                                         objective_function=objective_function,
                                                                         n_iters=(int(iterations + run_more)),
                                                                         step=step)
@@ -83,7 +82,7 @@ def run_experiment(iterations,
 
     for step in afw_step_size_rules:
         current_label = translate_step_types("AFW", step)
-        iterate_list, loss_list, fw_gap_list, x, x_p_list = away_step_frank_wolfe(constraint_set=constraint_set,
+        iterate_list, loss_list, fw_gap_list, x, x_p_list = away_step_frank_wolfe(feasible_region=feasible_region,
                                                                                   objective_function=objective_function,
                                                                                   n_iters=(
                                                                                       int(iterations + run_more)),
@@ -99,7 +98,7 @@ def run_experiment(iterations,
     for step in difw_step_size_rules:
         current_label = translate_step_types("DIFW", step)
         iterate_list, loss_list, fw_gap_list, x, x_p_list = decomposition_invariant_frank_wolfe(
-            constraint_set=constraint_set,
+            feasible_region=feasible_region,
             objective_function=objective_function,
             n_iters=(int(iterations + run_more)),
             step=step)

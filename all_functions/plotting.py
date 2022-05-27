@@ -5,6 +5,7 @@ from global_ import *
 
 
 def determine_y_lims(data):
+    """Determines how large the y-axis has to be given the data."""
     max_val = 1e-16
     min_val = 1e+16
     for entry in data:

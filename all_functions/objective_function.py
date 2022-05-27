@@ -22,13 +22,15 @@ class SquaredLoss:
         evaluate_gradient(x: ElementMarginalPolytope, w: ElementMarginalPolytope)
             Evaluates the gradient of x at w.
         compute_step_size(iteration: int, x: ElementMarginalPolytope, w: ElementMarginalPolytope,
-                          max_step: float = 1, n_iters_line_search: int = 100, step_type: str = "open loop")
+                          step: dict, max_step: float)
             Computes the step size given x in a certain direction.
     """
 
     def __init__(self, mu: list = None):
         self.mu = mu
         self.mu_squared = 0
+
+        # needs to bring mu into the correct form and precompute various variables
         if self.mu is not None:
             self.mu_a = self.mu[0].flatten()
             self.mu_b = self.mu[1].flatten()

@@ -30,16 +30,16 @@ for rho in rhos:
 
     if rho != -1:
         file_name = "probability_simplex_afw_difw_rho_" + str(rho)
-        constraint_set, objective_function = polytope_experiment(DIMENSION, rho)
+        feasible_region, objective_function = polytope_experiment(DIMENSION, rho)
     elif rho == -1:
         file_name = "probability_simplex_afw_difw_interior"
-        constraint_set, objective_function = probability_simplex_interior_fast_ls_ss(DIMENSION)
+        feasible_region, objective_function = probability_simplex_interior_fast_ls_ss(DIMENSION)
 
     run_more = 0
     if rho == 2:
         run_more = RUN_MORE
 
-    primal_gaps, labels = run_experiment(ITERATIONS, objective_function, constraint_set, run_more=run_more,
+    primal_gaps, labels = run_experiment(ITERATIONS, objective_function, feasible_region, run_more=run_more,
                                          afw_step_size_rules=afw_step_size_rules,
                                          difw_step_size_rules=difw_step_size_rules)
     primal_gaps = only_min(primal_gaps)

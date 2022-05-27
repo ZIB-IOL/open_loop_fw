@@ -24,9 +24,9 @@ for rho in rhos:
         legend = True
     file_name = "probability_simplex_rho_" + str(rho)
 
-    constraint_set, objective_function = polytope_experiment(DIMENSION, rho)
+    feasible_region, objective_function = polytope_experiment(DIMENSION, rho)
 
-    primal_gaps, labels = run_experiment(ITERATIONS, objective_function, constraint_set, run_more=RUN_MORE,
+    primal_gaps, labels = run_experiment(ITERATIONS, objective_function, feasible_region, run_more=RUN_MORE,
                                          fw_step_size_rules=fw_step_size_rules)
     primal_gaps = only_min(primal_gaps)
     primal_gap_plotter(y_data=primal_gaps,

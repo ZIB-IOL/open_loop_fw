@@ -24,11 +24,15 @@ class ElementMarginalPolytope:
             Updates weights and points.
         compute_scalar_product()
             Computes the scalar product of the element y of C with another element of C, that is, <w, y>.
+        compute_scalar_product_with_mu(mu)
+            Computes the scalar product with mu = sum_j=1 to len(mu[0]) a_j cos(2pi j x) + b_j sin(2pi j x).
+        __copy__()
+            Creates a copy of the instance.
         print_weights_points()
             Prints the weights and points.
-        check_status_ox_weights_and_points()
+        check_status_of_weights_and_points()
             Checks whether the weights and points are in the correct format.
-        check_shape_ox_weights_and_points()
+        check_shape_of_weights_and_points()
         check_sum_weights()
         check_points_are_in_feasibility_region()
 
@@ -45,7 +49,7 @@ class ElementMarginalPolytope:
             self.points = np.array([0]).astype(np.float64)
         else:
             self.points = points.astype(np.float64)
-        self.check_status_ox_weights_and_points()
+        self.check_status_of_weights_and_points()
 
     def update(self, w, scalar: float = 1):
         """Updates weights and points.
@@ -65,7 +69,7 @@ class ElementMarginalPolytope:
             self.weights *= (1 - scalar)
             self.weights = np.append(self.weights, scalar * w.weights)
             self.points = np.append(self.points, w.points)
-        self.check_status_ox_weights_and_points()
+        self.check_status_of_weights_and_points()
 
     def compute_scalar_product(self, w):
         """Computes the scalar product of the element x of C with another element of C, that is, <x, w>.
@@ -127,7 +131,7 @@ class ElementMarginalPolytope:
         print("Weights: ", self.weights)
         print("Points: ", self.points)
 
-    def check_status_ox_weights_and_points(self):
+    def check_status_of_weights_and_points(self):
         """Checks whether the weights and points are in the correct format."""
         self.check_shape_of_weights_and_points()
         self.check_sum_weights()
@@ -142,12 +146,12 @@ class ElementMarginalPolytope:
     def check_points_are_in_feasibility_region(self):
         assert (0 <= self.points).all() & (self.points <= 1).all(), "Points have to be in [0, 1]."
 
-    def copy(self):
-        return ElementMarginalPolytope(weights=self.weights, points=self.points)
+    # def copy(self):
+    #     return ElementMarginalPolytope(weights=self.weights, points=self.points)
 
 
 def bp(y: float, degree: int = 2):
-    """Evaluates the Bernoulli polynomial of given degree at x.
+    """Evaluates the Bernoulli polynomial of given degree at y.
 
     Args:
         y: float
@@ -156,7 +160,7 @@ def bp(y: float, degree: int = 2):
             The degree of the Bernoulli polynomial. (Default is 2).
 
     Returns:
-        The evaluation of the Bernoulli polynomial of given degree at x.
+        The evaluation of the Bernoulli polynomial of given degree at y.
     """
     if degree == 2:
         return (y ** 2 - y + 1 / 6)

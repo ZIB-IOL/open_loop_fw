@@ -37,14 +37,14 @@ for mu in mus:
     legend = False
     if mu == mus[-1]:
         legend = True
-    constraint_set = HilbertSpaceWhaba(iterations_lmo=iterations_lmo)
+    feasible_region = HilbertSpaceWhaba(iterations_lmo=iterations_lmo)
     objective_function = SquaredLoss(mu=mu)
     if mu is None:
         file_name = "kernel_herding_uniform"
     else:
         file_name = "kernel_herding_non_uniform"
 
-    primal_gaps, labels = run_experiment(iterations, objective_function, constraint_set,
+    primal_gaps, labels = run_experiment(iterations, objective_function, feasible_region,
                                          fw_step_size_rules=fw_step_size_rules)
     primal_gaps = only_min(primal_gaps)
     primal_gap_plotter(y_data=primal_gaps,
