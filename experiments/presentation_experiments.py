@@ -25,6 +25,8 @@ for rho in rhos:
 
     primal_gaps, labels = run_experiment(ITERATIONS, objective_function, feasible_region, run_more=RUN_MORE,
                                          fw_step_size_rules=fw_step_size_rules)
+
+    labels = ["Line Search", "Open Loop"]
     primal_gaps = only_min(primal_gaps)
     primal_gap_plotter(y_data=primal_gaps,
                        labels=labels,
@@ -32,7 +34,7 @@ for rho in rhos:
                        file_name=file_name,
                        x_lim=(1, ITERATIONS),
                        y_lim=determine_y_lims(primal_gaps),
-                       y_label=r'$\mathrm{min}_i  \ h_i$',
+                       y_label=r'$\mathrm{min}_i  \ f(x_i) - f(x^*)$',
                        directory="figures/presentation",
                        legend=legend
                        )
