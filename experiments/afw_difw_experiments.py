@@ -9,16 +9,16 @@ mpl.rcParams['agg.path.chunksize'] = CHUNKSIZE
 mpl.rcParams['axes.linewidth'] = LINEWIDTH
 
 afw_step_size_rules = [
-    {"step type": "line search afw"},
-    {"step type": "open loop", "a": 2, "b": 1, "c": 2, "d": 1},
-    {"step type": "open loop", "a": 4, "b": 1, "c": 4, "d": 1},
+    {"step type": "line-search afw"},
+    {"step type": "open-loop", "a": 2, "b": 1, "c": 2, "d": 1},
+    {"step type": "open-loop", "a": 4, "b": 1, "c": 4, "d": 1},
 ]
 
 difw_step_size_rules = [
-    {"step type": "line search difw probability simplex"},
-    {"step type": "open loop", "a": 2, "b": 1, "c": 2, "d": 1},
-    {"step type": "open loop", "a": 4, "b": 1, "c": 4, "d": 1},
-    {"step type": "open loop", "a": 8, "b": 1, "c": 8, "d": 1},
+    {"step type": "line-search difw probability simplex"},
+    {"step type": "open-loop", "a": 2, "b": 1, "c": 2, "d": 1},
+    {"step type": "open-loop", "a": 4, "b": 1, "c": 4, "d": 1},
+    {"step type": "open-loop", "a": 8, "b": 1, "c": 8, "d": 1},
 ]
 
 rhos = [-1, 2 / DIMENSION, 2]

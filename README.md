@@ -1,8 +1,8 @@
-# Acceleration of Frank-Wolfe algorithms with open loop step-sizes
+# Acceleration of Frank-Wolfe algorithms with open-loop step-sizes
 
 Code for the paper:
 Wirth, E.S., Kerdreux, T., & Pokutta, S. (2022).
-[Acceleration of Frank-Wolfe algorithms with open loop step-sizes](https://arxiv.org/abs/2205.12838).
+[Acceleration of Frank-Wolfe algorithms with open-loop step-sizes](https://arxiv.org/abs/2205.12838).
 
 ## Installation guide
 

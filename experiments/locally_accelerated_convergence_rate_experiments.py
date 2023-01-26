@@ -9,7 +9,7 @@ import matplotlib as mpl
 mpl.rcParams['agg.path.chunksize'] = CHUNKSIZE
 mpl.rcParams['axes.linewidth'] = 3
 
-fw_step_size_rules = [{"step type": "open loop", "a": 4, "b": 1, "c": 4, "d": 1}]
+fw_step_size_rules = [{"step type": "open-loop", "a": 4, "b": 1, "c": 4, "d": 1}]
 
 rhos = [-1, 2]
 

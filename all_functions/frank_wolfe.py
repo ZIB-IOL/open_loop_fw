@@ -18,12 +18,12 @@ def frank_wolfe(feasible_region,
             step: dict
                 A dictionnary containing the information about the step type. The dictionary can have the following arg-
                 uments:
-                    "step type": Choose from "open loop", "exact", "line search", "short step".
+                    "step type": Choose from "open-loop", "exact", "line-search", "short-step".
                 Additional Arguments:
-                    For "open loop", provide integer values for the keys "a", "b", "c" that affect the step type as
+                    For "open-loop", provide integer values for the keys "a", "b", "c" that affect the step type as
                     follows: a / (b * iteration + c)
-                    For "line search", provide an integer for the number of exhaustive search steps for the key
-                    "number of iterations for line search".
+                    For "line-search", provide an integer for the number of exhaustive search steps for the key
+                    "number of iterations for line-search".
             n_iters: integer, Optional
                 The number of iterations. (Default is 100.)
 
@@ -180,7 +180,7 @@ def away_step_frank_wolfe(feasible_region,
             else:
                 lambdas[index_a, 0] -= gamma
 
-        if step["step type"] == "open loop":
+        if step["step type"] == "open-loop":
             if (eta ** 2 - gamma ** 2) * L * diameter ** 2 >= (eta - gamma) * gradient.T.dot(
                     direction_a - direction_fw):
                 l += 1
@@ -192,7 +192,7 @@ def away_step_frank_wolfe(feasible_region,
         iterate_list.append(x)
         loss_list.append(loss)
 
-        if step["step type"] != "open loop" and i > 1 and loss_list[-1] > 10e-10:
+        if step["step type"] != "open-loop" and i > 1 and loss_list[-1] > 10e-10:
             assert loss_list[-1] - 10e-10 <= loss_list[-2], "Increse in loss should never happen."
         fw_gap_list.append(fw_gap)
 
@@ -256,9 +256,9 @@ def decomposition_invariant_frank_wolfe(feasible_region,
             scalar = objective_function.compute_step_size(i, x, direction, gradient, step=step)
         except:
             break
-        if step["step type"] in ["line search difw probability simplex", "short step difw probability simplex"]:
+        if step["step type"] in ["line-search difw probability simplex", "short-step difw probability simplex"]:
             x = x.flatten() + scalar * direction
-        elif step["step type"] == "open loop":
+        elif step["step type"] == "open-loop":
             j = 0
             while True:
                 if 2 ** (-j) <= scalar:

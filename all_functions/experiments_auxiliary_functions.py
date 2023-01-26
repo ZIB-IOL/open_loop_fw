@@ -24,13 +24,13 @@ def compute_convergence_rates(data, n_iterates):
 
 
 def translate_step_types(current_label, step):
-    if step["step type"] == "open loop":
-        current_label = current_label + " " + "open loop with" + " " + r"$\ell={}$".format(str(int(step["a"])))
-    if step["step type"] == "open loop constant":
+    if step["step type"] == "open-loop":
+        current_label = current_label + " " + "open-loop with" + " " + r"$\ell={}$".format(str(int(step["a"])))
+    if step["step type"] == "open-loop constant":
         current_label = current_label + " " + "constant"
-    elif step["step type"] in ["line search", "line search difw probability simplex", "line search afw"]:
-        current_label = current_label + " " + "line search"
-    elif step["step type"] in ["short step", "short step difw probability simplex", "short step afw"]:
+    elif step["step type"] in ["line-search", "line-search difw probability simplex", "line-search afw"]:
+        current_label = current_label + " " + "line-search"
+    elif step["step type"] in ["short-step", "short-step difw probability simplex", "short-step afw"]:
         current_label = current_label + " " + "short-step"
     return current_label
 

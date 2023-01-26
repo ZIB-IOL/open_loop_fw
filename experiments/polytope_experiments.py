@@ -10,10 +10,10 @@ mpl.rcParams['agg.path.chunksize'] = CHUNKSIZE
 mpl.rcParams['axes.linewidth'] = LINEWIDTH
 
 fw_step_size_rules = [
-    {"step type": "line search"},
-    {"step type": "open loop", "a": 1, "b": 1, "c": 1, "d": 1},
-    {"step type": "open loop", "a": 2, "b": 1, "c": 2, "d": 1},
-    {"step type": "open loop", "a": 4, "b": 1, "c": 4, "d": 1},
+    {"step type": "line-search"},
+    {"step type": "open-loop", "a": 1, "b": 1, "c": 1, "d": 1},
+    {"step type": "open-loop", "a": 2, "b": 1, "c": 2, "d": 1},
+    {"step type": "open-loop", "a": 4, "b": 1, "c": 4, "d": 1},
 ]
 
 rhos = [0.25, 2]

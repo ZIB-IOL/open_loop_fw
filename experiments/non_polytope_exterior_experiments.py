@@ -27,13 +27,13 @@ for p in ps:
     feasible_region, objective_function, cst = uniformly_convex(DIMENSION, p=p, location=location, convexity=convexity)
 
     fw_step_size_rules = [
-        {"step type": "line search"},
-        {"step type": "short step"},
-        {"step type": "open loop", "a": 1, "b": 1, "c": 1, "d": 1},
-        {"step type": "open loop", "a": 2, "b": 1, "c": 2, "d": 1},
-        {"step type": "open loop", "a": 4, "b": 1, "c": 4, "d": 1},
-        {"step type": "open loop", "a": 6, "b": 1, "c": 6, "d": 1},
-        {"step type": "open loop constant", "cst": cst}
+        {"step type": "line-search"},
+        {"step type": "short-step"},
+        {"step type": "open-loop", "a": 1, "b": 1, "c": 1, "d": 1},
+        {"step type": "open-loop", "a": 2, "b": 1, "c": 2, "d": 1},
+        {"step type": "open-loop", "a": 4, "b": 1, "c": 4, "d": 1},
+        {"step type": "open-loop", "a": 6, "b": 1, "c": 6, "d": 1},
+        {"step type": "open-loop constant", "cst": cst}
     ]
     primal_gaps, labels = run_experiment(ITERATIONS, objective_function, feasible_region, run_more=RUN_MORE,
                                          fw_step_size_rules=fw_step_size_rules)

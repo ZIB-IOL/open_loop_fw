@@ -23,7 +23,7 @@ class SquaredLoss:
             Evaluates the gradient of x at w.
         compute_step_size(iteration: int, x: ElementMarginalPolytope, w: ElementMarginalPolytope,
                           step: dict, max_step: float)
-            Computes the step size given x in a certain direction.
+            Computes the step-size given x in a certain direction.
     """
 
     def __init__(self, mu: list = None):
@@ -71,11 +71,11 @@ class SquaredLoss:
                           w: ElementMarginalPolytope,
                           step: dict,
                           max_step: float = 1):
-        """Computes the step size given x in a certain direction.
+        """Computes the step-size given x in a certain direction.
 
         Args:
             iteration: integer
-                The current iteration of the algorithm. Needed for "open loop".
+                The current iteration of the algorithm. Needed for "open-loop".
             x: instance of ElementMarginalPolytope
                 An instance of ElementMarginalPolytope.
             w: instance of ElementMarginalPolytope
@@ -83,27 +83,27 @@ class SquaredLoss:
             step: dict
                 A dictionnary containing the information about the step type. The dictionary can have the following arg-
                 uments:
-                    "step type": Choose from "open loop", "exact", "line search", "short step".
+                    "step type": Choose from "open-loop", "exact", "line-search", "short-step".
                 Additional Arguments:
-                    For "open loop", provide float values for the keys "a", "b", "c", "d" that affect the step type
+                    For "open-loop", provide float values for the keys "a", "b", "c", "d" that affect the step type
                     as follows: a / (b * iteration**d + c)
-                    For "line search", provide an integer for the number of exhaustive search steps for the key
-                    "number of iterations for line search".
+                    For "line-search", provide an integer for the number of exhaustive search steps for the key
+                    "number of iterations for line-search".
             max_step: float, Optional
-                Maximum step size. (Default is 1.)
+                Maximum step-size. (Default is 1.)
 
         Returns:
             optimal_distance: float
-                The step size computed according to the chosen method.
+                The step-size computed according to the chosen method.
         """
         step_type = step["step type"]
-        if step_type == "open loop":
+        if step_type == "open-loop":
             a = step["a"]
             b = step["b"]
             c = step["c"]
             d = step["d"]
             optimal_distance = a / (b * iteration ** d + c)
-        elif step_type in ["exact", "line search"]:
+        elif step_type in ["exact", "line-search"]:
 
             sp_x_x = x.compute_scalar_product(x)
             sp_x_w = x.compute_scalar_product(w)
@@ -118,7 +118,7 @@ class SquaredLoss:
             denominator = sp_x_x - 2 * sp_x_w + sp_w_w
 
             optimal_distance = numerator / denominator
-        elif step_type == "short step":
+        elif step_type == "short-step":
             sp_x_x = x.compute_scalar_product(x)
             sp_x_w = x.compute_scalar_product(w)
             sp_w_w = w.compute_scalar_product(w)
@@ -251,7 +251,7 @@ class SquaredLossFinDim:
         evaluate_gradient(x: np.ndarray)
             Evaluates the gradient of f at x.
         compute_step_size(iteration: int, x: np.ndarray, direction: np.ndarray, step: dict, max_step: float = 1)
-            Computes the step size for iterate x in a certain direction.
+            Computes the step-size for iterate x in a certain direction.
     """
 
     def __init__(self, A: np.ndarray, b: np.ndarray, lmbda: float = 0.0):
@@ -287,11 +287,11 @@ class SquaredLossFinDim:
                           gradient: np.array,
                           step: dict,
                           max_step: float = 1):
-        """Computes the step size for iterate x in a certain direction.
+        """Computes the step-size for iterate x in a certain direction.
 
         Args:
             iteration: integer
-                The current iteration of the algorithm. Needed for "open loop".
+                The current iteration of the algorithm. Needed for "open-loop".
             x: np.ndarray
             direction: np.ndarray
                 FW vertex.
@@ -299,53 +299,53 @@ class SquaredLossFinDim:
             step: dict
                 A dictionnary containing the information about the step type. The dictionary can have the following arg-
                 uments:
-                    "step type": Choose from "open loop", "open loop constant", "line search", "line search afw",
-                    "short step afw", "line search difw probability simplex", "short step", and
-                    "short step difw probability simplex".
+                    "step type": Choose from "open-loop", "open-loop constant", "line-search", "line-search afw",
+                    "short-step afw", "line-search difw probability simplex", "short-step", and
+                    "short-step difw probability simplex".
                 Additional Arguments:
-                    For "open loop", provide float values for the keys "a", "b", "c", "d" that affect the step type
+                    For "open-loop", provide float values for the keys "a", "b", "c", "d" that affect the step type
                     as follows: a / (b * iteration**d + c)
             max_step: float, Optional
-                Maximum step size. (Default is 1.)
+                Maximum step-size. (Default is 1.)
 
         Returns:
             optimal_distance: float
-                The step size computed according to the chosen method.
+                The step-size computed according to the chosen method.
         """
         x = x.flatten()
         direction = direction.flatten()
         gradient = gradient.flatten()
         step_type = step["step type"]
-        if step_type == "open loop":
+        if step_type == "open-loop":
             a = step["a"]
             b = step["b"]
             c = step["c"]
             d = step["d"]
             optimal_distance = a / (b * iteration ** d + c)
-        elif step_type == "open loop constant":
+        elif step_type == "open-loop constant":
             optimal_distance = step["cst"]
 
-        elif step_type == "line search":
+        elif step_type == "line-search":
             p_x = direction - x
             optimal_distance = float(-gradient.T.dot(p_x)) / (p_x.T.dot(self.Asquared).dot(p_x))
 
-        elif step_type == "short step":
+        elif step_type == "short-step":
             optimal_distance = gradient.dot(x - direction) / (self.L * np.linalg.norm(x - direction) ** 2)
 
-        elif step_type == "line search afw":
+        elif step_type == "line-search afw":
             optimal_distance = float(-gradient.T.dot(direction)) / (direction.T.dot(self.Asquared).dot(direction))
 
-        elif step_type == "short step afw":
+        elif step_type == "short-step afw":
             optimal_distance = float(-gradient.T.dot(direction)) / (self.L * np.linalg.norm(direction) ** 2)
 
-        elif step_type == "line search difw probability simplex":
+        elif step_type == "line-search difw probability simplex":
             y_mod = direction.copy()[(direction < 0)]
             x_mod = x.copy()[(direction < 0)]
             y_mod[(y_mod == 0)] = 1
             max_step = min(max_step, np.max(-x_mod / y_mod))
             optimal_distance = float(-gradient.T.dot(direction)) / (direction.T.dot(self.Asquared).dot(direction))
 
-        elif step_type == "short step difw probability simplex":
+        elif step_type == "short-step difw probability simplex":
             y_mod = direction.copy()[(direction < 0)]
             x_mod = x.copy()[(direction < 0)]
             y_mod[(y_mod == 0)] = 1
