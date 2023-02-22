@@ -3,9 +3,12 @@
 
 STYLES = ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-']
 COLORS = [ 'red', 'blue', 'orange',  'green', 'purple', 'magenta', 'cyan', 'olive']
-MARKERS = ['o', 's', 'v', 'd', 'x', 'o', 's', 'v', 'd', 'x', 'o', 's', 'v', 'd', 'x', 'o', 's', 'v', 'd', 'x',
-           's', 'v', 'd', 'x', 'o', 's', 'v', 'd', 'x', 'o', 's', 'v', 'd', 'x', 'o', 's', 'v', 'd', 'x', 'o',
-           'v', 'd', 'x', 'o', 's', 'v', 'd', 'x', 'o', 's', 'v', 'd', 'x', 'o', 's', 'v', 'd', 'x', 'o', 's']
+
+
+
+MARKERS = ['^', 's', 'p', 'X', 'o', 'v', 'd']
+MARKER_SIZE = 20
+MARK_EVERY = 0.1
 LINEWIDTH = 5
 FONT_SIZE = 36
 FONT_SIZE_LEGEND = 28

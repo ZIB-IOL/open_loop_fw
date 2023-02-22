@@ -49,6 +49,9 @@ def primal_gap_plotter(y_data: list,
                        linewidth: float = LINEWIDTH,
                        styles: list = STYLES,
                        colors: list = COLORS,
+                       markers: list = MARKERS,
+                       marker_size: int = MARKER_SIZE,
+                       mark_every: float = MARK_EVERY,
                        fontsize: int = FONT_SIZE,
                        fontsize_legend: int = FONT_SIZE_LEGEND,
                        legend: bool = True):
@@ -84,6 +87,12 @@ def primal_gap_plotter(y_data: list,
             (Default is STYLES.)
         colors: list, Optional
             (Default is COLORS.)
+        markers: list, Optional
+            (Default is MARKERS.)
+        marker_size: int, Optional
+            (Default is MARKER_SIZE.)
+        mark_every: float, Optional
+            (Default is MARK_EVERY.)
         fontsize: int, Optional
             (Default is FONT_SIZE.)
         fontsize_legend: int, Optional
@@ -101,8 +110,8 @@ def primal_gap_plotter(y_data: list,
     plt.rcParams['text.usetex'] = True
 
     for i in range(0, len(y_data)):
-        plt.plot(y_data[i], linestyle=styles[i], color=colors[i], label=labels[i],
-                 linewidth=linewidth)
+        plt.plot(y_data[i], linestyle=styles[i], color=colors[i], label=labels[i], linewidth=linewidth,
+                 marker=markers[i], markersize=marker_size, markevery=mark_every)
     if legend:
         plt.legend(fontsize=fontsize_legend, loc="upper right")
     plt.title(title, fontsize=fontsize)
