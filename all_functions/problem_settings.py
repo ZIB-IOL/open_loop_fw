@@ -1,7 +1,7 @@
 import numpy as np
 
 from all_functions.feasible_region import lpnorm, UnitSimplex, LpBall
-from all_functions.objective_function import SquaredLossFinDim
+from all_functions.objective_function import SquaredLossFinDim, LogisticLossFinDim
 
 
 def polytope_experiment(dimension: int, rho: float):
@@ -53,11 +53,8 @@ def probability_simplex_interior_fast_ls_ss(dimension):
 def uniformly_convex(dimension, p=2, location: str = "interior", convexity: str = "strong"):
     """Creates a problem setting for which FW with ls and ss converge linearly and FW with ol
     converges at a rate of 1/t² after a certain number of iterations. Specificaly,
-        f(x) = 1/2 ||x-b||_2^2,
-        where b is a non-sparse random vector.
-
-        and
-        the feasible region is the probability simplex.
+        f(x) = 1/2 ||Ax-b||_2^2,
+        where A is a random matrix and b is a non-sparse random vector and the feasible region is an Lp ball.
 
     The unconstrained optimum lies in location, which is in ["interior", "boundary", "exterior"].
         """
@@ -93,3 +90,21 @@ def uniformly_convex(dimension, p=2, location: str = "interior", convexity: str 
         lmbda = np.linalg.norm(b) - 1
         cst = (alpha * lmbda) / (2 * L)
     return feasible_region, objective_function, cst
+
+
+def uniformly_convex_logistic_regression(samples, dimension, p=2):
+    """Creates objective
+        f(x) = (1/m)sum_i log(1 + exp(-b_i * a_i^T * x)),
+    where a_i and b_i are random vectors and the region is an Lp ball. The optimum is always in the exterior.
+    """
+    # Generate a random dataset
+    A = np.random.rand(samples, dimension) / samples # 100 samples with 3 features
+    b = np.random.randint(0, 2, size=samples)  # binary labels
+
+    # Add a bias term
+    A = np.hstack((np.ones((A.shape[0], 1)), A))
+
+    objective_function = LogisticLossFinDim(A=A, b=b)
+    feasible_region = LpBall(dimension=A.shape[1], p=p)
+
+    return feasible_region, objective_function

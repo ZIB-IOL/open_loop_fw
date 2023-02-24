@@ -25,7 +25,7 @@ fw_step_size_rules = [
 ]
 
 iterations = 1000
-iterations_lmo = 2000
+iterations_lmo = 1000
 
 rho = [np.random.rand(random.randint(2, 5), 1), np.random.rand(random.randint(2, 5), 1)]
 distribution_as_string = distribution_to_string(rho)

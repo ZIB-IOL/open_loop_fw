@@ -124,12 +124,12 @@ class LpBall:
         self.diameter = 2
 
     def linear_minimization_oracle(self,
-                                   gradient: np.ndarray,
+                                   v: np.ndarray,
                                    x: np.ndarray):
-        """Solves the linear minimization problem min_g in Lp <grad f.T(x), g>.
+        """Solves the linear minimization problem min_g in Lp <v, g>.
 
         Args:
-            gradient: np.ndarray
+            v: np.ndarray
             x: np.ndarray
 
         Returns:
@@ -141,27 +141,25 @@ class LpBall:
                 ||x_t - p_t||.
         """
         if self.p == 1:
-            tmp_pos = np.abs(gradient).argmax()
-            sign = np.sign(gradient[tmp_pos])
+            v = v.flatten()
+            tmp_pos = np.abs(v).argmax()
+            sign = np.sign(v[tmp_pos])
             p = np.zeros(self.dimension)
             p[tmp_pos] = - sign
             assert np.linalg.norm(p, ord=1) <= 1, "p is not in the L1 ball."
-            wolfe_gap = float(gradient.T.dot(fd(x)) - gradient.T.dot(fd(p)))
         elif self.p == -1:
-            gradient = gradient.flatten()
-            p = -np.sign(gradient)
+            v = v.flatten()
+            p = -np.sign(v)
             assert (np.abs(p) <= 1).all(), "p is not in the Linfinity ball."
-            wolfe_gap = float(fd(gradient).T.dot(fd(x)) - fd(gradient).T.dot(fd(p)))
+
         else:
             # The solution to min_||f||_p <= 1 <f,g> is given by f_i = g_i^{q-1}/||g||_q^{q-1}.
             x = x.flatten()
-            gradient = gradient.flatten()
-            p = -np.sign(gradient) * np.abs(gradient) ** (self.q - 1) / (
-                    (lpnorm(gradient, self.q)) ** (self.q - 1))
-            wolfe_gap = float(gradient[:, np.newaxis].T.dot(x[:, np.newaxis])
-                              - gradient[:, np.newaxis].T.dot(p[:, np.newaxis]))
+            v = v.flatten()
+            p = -np.sign(v) * np.abs(v) ** (self.q - 1) / (
+                    (lpnorm(v, self.q)) ** (self.q - 1))
             assert abs(lpnorm(p, self.p) - 1) < 10e-10, "p is not in the Lp ball."
-
+        wolfe_gap = float(fd(v).T.dot(fd(x)) - fd(v).T.dot(fd(p)))
         pt_xt = np.linalg.norm(x.flatten() - p.flatten())
         return p, wolfe_gap, pt_xt
 

@@ -359,3 +359,100 @@ class SquaredLossFinDim:
         if optimal_distance > max_step:
             optimal_distance = max_step
         return float(optimal_distance)
+
+
+def sigmoid(x: np.ndarray):
+    return 1 / (1 + np.exp(-x))
+
+if __name__ == '__main__':
+
+    x = np.array([[1, 0],
+                 [np.log(2), np.log(3)]])
+    print(sigmoid(x))
+
+
+class LogisticLossFinDim:
+    """Represents the logistic loss function f(x) = (1/m)sum_i log(1 + exp(-b_i * a_i^T * x)).
+
+    Attributes:
+        A: np.ndarray
+            A np.ndarray of dimension (m, n).
+        b: np.ndarray
+            A np.ndarray of dimension (m, 1).
+        m: int
+            Number of data points.
+        n: int
+            Number of features.
+
+    Methods:
+        evaluate_loss(x: np.ndarray)
+            Evaluates the loss of f at x.
+        evaluate_gradient(x: np.ndarray)
+            Evaluates the gradient of f at x.
+        compute_step_size(iteration: int, x: np.ndarray, direction: np.ndarray, step: dict, max_step: float = 1)
+            Computes the step-size for iterate x in a certain direction.
+    """
+
+    def __init__(self, A: np.ndarray, b: np.ndarray):
+        self.A = A
+        self.b = b.flatten()
+        self.m, self.n = A.shape
+
+    def evaluate_loss(self, x: np.ndarray):
+        """Evaluates the loss at x."""
+        x = x.flatten()
+        logits = self.A.dot(x) * self.b
+        return float(np.mean(np.logaddexp(0, -logits)))
+
+    def evaluate_gradient(self, x: np.ndarray):
+        """Evaluates the gradient of f at x."""
+        x = x.flatten()
+        logits = self.A.dot(x) * self.b
+        probs = sigmoid(-logits)
+        grad = self.A.T.dot(-self.b * probs) / self.m
+        return grad
+
+    def compute_step_size(self,
+                          iteration: int,
+                          x: np.ndarray,
+                          direction: np.ndarray,
+                          gradient: np.array,
+                          step: dict,
+                          max_step: float = 1):
+        """Computes the step-size for iterate x in a certain direction.
+
+        Args:
+            iteration: integer
+                The current iteration of the algorithm. Needed for "open-loop".
+            x: np.ndarray
+            direction: np.ndarray
+                FW vertex.
+            gradient: np.ndarray
+            step: dict
+                A dictionnary containing the information about the step type. The dictionary can have the following arg-
+                uments:
+                    "step type": Choose from "open-loop", "open-loop constant"
+                Additional Arguments:
+                    For "open-loop", provide float values for the keys "a", "b", "c", "d" that affect the step type
+                    as follows: a / (b * iteration**d + c)
+            max_step: float, Optional
+                Maximum step-size. (Default is 1.)
+
+        Returns:
+            optimal_distance: float
+                The step-size computed according to the chosen method.
+        """
+        step_type = step["step type"]
+        if step_type == "open-loop":
+            a = step["a"]
+            b = step["b"]
+            c = step["c"]
+            d = step["d"]
+            optimal_distance = a / (b * iteration ** d + c)
+        elif step_type == "open-loop constant":
+            optimal_distance = step["cst"]
+
+        if optimal_distance > max_step:
+            optimal_distance = max_step
+
+        return float(optimal_distance)
