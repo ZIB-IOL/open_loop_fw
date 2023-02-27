@@ -1,7 +1,7 @@
 from all_functions.auxiliary_functions import fd
 from all_functions.feasible_region import away_oracle, vertex_among_active_vertices
 
-import numpy as np
+import autograd.numpy as np
 
 
 def frank_wolfe(feasible_region,
@@ -328,6 +328,7 @@ def momentum_guided_frank_wolfe(feasible_region,
 
     for i in range(1, n_iters):
         scalar = objective_function.compute_step_size(i, x, v, gradient, step=step)
+
         y = (1-scalar)*x + scalar*v
         gradient = objective_function.evaluate_gradient(y)
         theta = (1-scalar)*theta.flatten() + scalar*gradient.flatten()

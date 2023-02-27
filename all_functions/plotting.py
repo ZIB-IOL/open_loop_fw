@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-import numpy as np
+import autograd.numpy as np
 from pathlib import Path
 from global_ import *
 

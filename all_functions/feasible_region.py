@@ -1,5 +1,5 @@
-
-import numpy as np
+import autograd.numpy as np
+from scipy.sparse.linalg import svds
 
 from all_functions.auxiliary_functions import fd, get_non_zero_indices
 from all_functions.hilbert_space_element import ElementMarginalPolytope
@@ -55,7 +55,7 @@ class HilbertSpaceWhaba:
                 An instance of ElementMarginalPolytope which is the approximate solution to the linear minimization
                 problem.
             wolfe_gap: float
-                The Frank-Wolfe gap.
+                The FW gap.
         """
 
         optimal_value = 10e16
@@ -105,23 +105,26 @@ class LpBall:
         dimension: integer, Optional
             The number of data points.
         p: float, Optional
-            Set p = -1 for L infinity ball. (Default is 1.0)
+            Set p = -1 for L infinity ball. (Default is 1.0.)
+        radius: float, Optional
+            (Default is 1.0.)
 
     Methods:
-        linear_minimization_oracle(gradient: np.ndarray, x: np.ndarray)
-            Solves the linear minimization problem min_g in Lp <grad f.T(x), g>.
+        linear_minimization_oracle(v: np.ndarray, x: np.ndarray)
+            Solves the linear minimization problem min_g in Lp <v, g>.
         membership_oracle(x,epsilon: float):
             Determines whether x is in the feasible region, on the boundary, or exterior the feasible region.
         initial_point()
             Returns the initial vertex.
     """
 
-    def __init__(self, dimension: int = 400, p: float = 1.0):
+    def __init__(self, dimension: int = 400, p: float = 1.0, radius: float = 1.0):
         self.dimension = dimension
         self.p = p
         if self.p > 1:
             self.q = 1 / (1 - 1 / self.p)
-        self.diameter = 2
+        self.radius = radius
+        self.diameter = 2 * self.radius
 
     def linear_minimization_oracle(self,
                                    v: np.ndarray,
@@ -133,44 +136,44 @@ class LpBall:
             x: np.ndarray
 
         Returns:
-            p: np.ndarray
+            fw_vertex: np.ndarray
                 The solution to the linear minimization problem.
             wolfe_gap: float
-                The Frank-Wolfe gap.
-            pt_xt: float
-                ||x_t - p_t||.
+                The FW gap.
+            distance_iterate_fw_vertex: float
+                The distance between the iterate x and the FW vertex fw_vertex.
         """
         if self.p == 1:
             v = v.flatten()
             tmp_pos = np.abs(v).argmax()
             sign = np.sign(v[tmp_pos])
-            p = np.zeros(self.dimension)
-            p[tmp_pos] = - sign
-            assert np.linalg.norm(p, ord=1) <= 1, "p is not in the L1 ball."
+            fw_vertex = np.zeros(self.dimension)
+            fw_vertex[tmp_pos] = - sign
+            assert np.linalg.norm(fw_vertex, ord=1) <= 1, "p is not in the feasible region."
         elif self.p == -1:
             v = v.flatten()
-            p = -np.sign(v)
-            assert (np.abs(p) <= 1).all(), "p is not in the Linfinity ball."
+            fw_vertex = -np.sign(v)
+            assert (np.abs(fw_vertex) <= 1).all(), "p is not in the feasible region."
 
         else:
             # The solution to min_||f||_p <= 1 <f,g> is given by f_i = g_i^{q-1}/||g||_q^{q-1}.
             x = x.flatten()
             v = v.flatten()
-            p = -np.sign(v) * np.abs(v) ** (self.q - 1) / (
+            fw_vertex = -np.sign(v) * np.abs(v) ** (self.q - 1) / (
                     (lpnorm(v, self.q)) ** (self.q - 1))
-            assert abs(lpnorm(p, self.p) - 1) < 10e-10, "p is not in the Lp ball."
-        wolfe_gap = float(fd(v).T.dot(fd(x)) - fd(v).T.dot(fd(p)))
-        pt_xt = np.linalg.norm(x.flatten() - p.flatten())
-        return p, wolfe_gap, pt_xt
+            assert abs(lpnorm(fw_vertex, self.p) - 1) < 10e-10, "p is not in the feasible region."
+        wolfe_gap = float(fd(v).T.dot(fd(x)) - fd(v).T.dot(fd(fw_vertex)))
+        distance_iterate_fw_vertex = np.linalg.norm(x.flatten() - fw_vertex.flatten())
+        return fw_vertex, wolfe_gap, distance_iterate_fw_vertex
 
     def membership_oracle(self, x: np.ndarray, epsilon: float = 10e-10):
         """Determines whether x is in the interior, boundary, or exterior of the feasible region."""
         norm = lpnorm(x, 1)
-        if abs(1 - norm) <= epsilon:
+        if abs(self.radius - norm) <= epsilon:
             return "boundary"
-        elif (1 - norm) > epsilon:
+        elif (self.radius - norm) > epsilon:
             return "interior"
-        elif (1 - norm) < epsilon:
+        elif (self.radius - norm) < epsilon:
             return "exterior"
 
     def initial_point(self):
@@ -185,43 +188,46 @@ class UnitSimplex:
 
     Args:
         dimension: integer, Optional
-            The number of data points.
+            The number of data points. (Default is 400.)
+        radius: float, Optional
+            (Default is 1.0.)
 
     Methods:
-        linear_minimization_oracle(gradient: np.ndarray, x: np.ndarray)
-            Solves the linear minimization problem min_g in probability simplex <grad f.T(x), g>.
+        linear_minimization_oracle(v: np.ndarray, x: np.ndarray)
+            Solves the linear minimization problem min_g in probability simplex <v, g>.
         membership_oracle(x,epsilon: float):
             Determines whether x is in the feasible region, on the boundary, or exterior the feasible region.
         initial_point()
             Returns the initial vertex.
     """
 
-    def __init__(self, dimension: int = 400):
+    def __init__(self, dimension: int = 400, radius: float = 1.0):
         self.dimension = dimension
-        self.diameter = 2
+        self.radius = radius
+        self.diameter = 2 * self.radius
 
     def linear_minimization_oracle(self,
-                                   gradient: np.ndarray,
+                                   v: np.ndarray,
                                    x: np.ndarray):
-        """Solves the linear minimization problem min_g in Lp <grad f.T(x), g>.
+        """Solves the linear minimization problem min_g in probability simplex <v, g>.
 
         Args:
-            gradient: np.ndarray
+            v: np.ndarray
             x: np.ndarray
 
         Returns:
             p: np.ndarray
                 The solution to the linear minimization problem.
             wolfe_gap: float
-                The Frank-Wolfe gap.
-            pt_xt: float
-                ||x_t - p_t||.
+                The FW gap.
+            distance_iterate_fw_vertex: float
+                The distance between the iterate x and the FW vertex fw_vertex.
         """
-        tmp_pos = gradient.argmin()
+        tmp_pos = v.argmin()
         p = np.zeros(self.dimension)
         p[tmp_pos] = 1
-        assert self.membership_oracle(p) in ["boundary", "interior"], "p is not in the L1 ball."
-        wolfe_gap = float(gradient.T.dot(fd(x)) - gradient.T.dot(fd(p)))
+        assert self.membership_oracle(p) in ["boundary", "interior"], "p is not in the feasible region."
+        wolfe_gap = float(v.T.dot(fd(x)) - v.T.dot(fd(p)))
 
         pt_xt = np.linalg.norm(x.flatten() - p.flatten())
         return p, wolfe_gap, pt_xt
@@ -230,11 +236,11 @@ class UnitSimplex:
         """Determines whether x is in the interior, boundary, or exterior of the feasible region."""
         norm = lpnorm(x, 1)
         if (x >= -epsilon).all():
-            if abs(1 - norm) <= epsilon:
+            if abs(self.radius - norm) <= epsilon:
                 return "boundary"
-            elif (1 - norm) > epsilon:
+            elif (self.radius - norm) > epsilon:
                 return "interior"
-        elif (1 - norm) < epsilon:
+        elif (self.radius - norm) < epsilon:
             return "exterior"
 
     def initial_point(self):
@@ -269,9 +275,9 @@ def vertex_among_active_vertices(active_vertices: np.ndarray, fw_vertex: np.ndar
     """Checks if the fw_vertex is in the set of active vertices for l1 ball or probability simplex
 
     Args:
-        active_vertices: cp.ndarray
+        active_vertices: np.ndarray
             A matrix whose column vectors are vertices of the l1 ball.
-        fw_vertex: cp.ndarray
+        fw_vertex: np.ndarray
             The Frank-Wolfe vertex.
 
     Returns:
@@ -293,6 +299,68 @@ def vertex_among_active_vertices(active_vertices: np.ndarray, fw_vertex: np.ndar
     return None
 
 
+class NuclearNormBall:
+    """A class used to represent the nuclear norm ball in R^{m x n}.
 
+    Args:
+        m: integer
+        n: integer
+        radius: float, Optional
+            (Default is 1.0.)
 
+    Methods:
+        linear_minimization_oracle(v: np.ndarray, x: np.ndarray)
+            Solves the linear minimization problem min_g in nuclear norm ball <v, g>.
+        membership_oracle(x,epsilon: float):
+            Determines whether x is in the feasible region, on the boundary, or exterior the feasible region.
+        initial_point()
+            Returns the initial vertex.
+    """
 
+    def __init__(self, m: int, n: int, radius: float = 1.0):
+        self.m = m
+        self.n = n
+        self.radius = radius
+        self.diameter = 2 * self.radius
+
+    def linear_minimization_oracle(self, v: np.ndarray, x: np.ndarray):
+        """Solves the linear minimization problem min_g in nuclear norm ball <v, g>.
+
+        Args:
+            v: np.ndarray
+            x: np.ndarray
+
+        Returns:
+            fw_vertex: np.ndarray
+                The solution to the linear minimization problem.
+            fw_gap: float
+                The FW gap.
+            distance_iterate_fw_vertex: float
+                The distance between the iterate x and the FW vertex fw_vertex.
+        """
+
+        G = np.reshape(-v, (self.m, self.n))
+        u1, s, u2 = svds(G, k=1, which='LM')
+        fw_vertex = np.reshape(self.radius * np.outer(u1, u2), len(v))
+
+        assert self.membership_oracle(fw_vertex) in ["boundary", "interior"], "fw_vertex is not in the feasible region."
+        fw_gap = float(v.T.dot(fd(x)) - v.T.dot(fd(fw_vertex)))
+
+        distance_iterate_fw_vertex = np.linalg.norm(x.flatten() - fw_vertex.flatten())
+        return fw_vertex, fw_gap, distance_iterate_fw_vertex
+
+    def membership_oracle(self, x: np.ndarray, epsilon: float = 10e-10):
+        """Determines whether x is in the interior, boundary, or exterior of the feasible region."""
+        norm = np.linalg.norm(x, 'nuc')
+        if (x >= -epsilon).all():
+            if abs(self.radius - norm) <= epsilon:
+                return "boundary"
+            elif (self.radius - norm) > epsilon:
+                return "interior"
+        elif (self.radius - norm) < epsilon:
+            return "exterior"
+
+    def initial_point(self):
+        """Returns the initial vertex."""
+        x = self.radius * np.reshape(np.outer(np.identity(self.m)[0], np.identity(self.n)[0]), self.m * self.n)
+        return x

@@ -1,8 +1,8 @@
-import numpy as np
+import autograd.numpy as np
 
 
 def fd(matrix, option="column"):
-    """Guarantees that numpy aarray is 2d.
+    """Guarantees that autograd.numpy aarray is 2d.
 
     Args:
         matrix: np.ndarray

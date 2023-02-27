@@ -1,7 +1,7 @@
 
 from all_functions.plotting import contour_plotter
 from all_functions.problem_settings import polytope_experiment, probability_simplex_interior_fast_ls_ss
-import numpy as np
+import autograd.numpy as np
 from all_functions.experiments_auxiliary_functions import run_experiment, compute_convergence_rates
 from global_ import *
 import matplotlib as mpl

@@ -1,6 +1,6 @@
 from all_functions.frank_wolfe import frank_wolfe, decomposition_invariant_frank_wolfe, away_step_frank_wolfe, \
     momentum_guided_frank_wolfe
-import numpy as np
+import autograd.numpy as np
 from scipy import stats
 
 

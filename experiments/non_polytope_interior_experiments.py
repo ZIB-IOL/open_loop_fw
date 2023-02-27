@@ -1,6 +1,6 @@
 import random
 
-import numpy as np
+import autograd.numpy as np
 
 from all_functions.plotting import primal_gap_plotter, determine_y_lims, only_min
 from all_functions.problem_settings import uniformly_convex

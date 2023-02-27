@@ -1,4 +1,5 @@
-import numpy as np
+import autograd.numpy as np
+from sklearn.preprocessing import StandardScaler
 
 from all_functions.feasible_region import lpnorm, UnitSimplex, LpBall
 from all_functions.objective_function import SquaredLossFinDim, LogisticLossFinDim
@@ -98,11 +99,38 @@ def uniformly_convex_logistic_regression(samples, dimension, p=2):
     where a_i and b_i are random vectors and the region is an Lp ball. The optimum is always in the exterior.
     """
     # Generate a random dataset
-    A = np.random.rand(samples, dimension) / samples # 100 samples with 3 features
+    A = np.random.rand(samples, dimension) / samples  # 100 samples with 3 features
     b = np.random.randint(0, 2, size=samples)  # binary labels
+    b[(b == 0)] = -1
 
-    # Add a bias term
-    A = np.hstack((np.ones((A.shape[0], 1)), A))
+    # # Add a bias term
+    # A = np.hstack((np.ones((A.shape[0], 1)), A))
+
+    objective_function = LogisticLossFinDim(A=A, b=b)
+    feasible_region = LpBall(dimension=A.shape[1], p=p)
+
+    return feasible_region, objective_function
+
+
+def gisette(p=2):
+    """Download the gisette training data and create the feasible region and objective function for logistic regression.
+    Returns 2000 samples of 5000 features.
+
+    References:
+        [1] Isabelle Guyon, Steve R. Gunn, Asa Ben-Hur, Gideon Dror, 2004. Result analysis of the NIPS 2003 feature
+        selection challenge. In: NIPS.
+    """
+
+
+    # Load the data files into numpy arrays
+    A = np.loadtxt('https://archive.ics.uci.edu/ml/machine-learning-databases/gisette/GISETTE/gisette_train.data')
+    A = A[:2000, :]
+    b = np.loadtxt('https://archive.ics.uci.edu/ml/machine-learning-databases/gisette/GISETTE/gisette_train.labels')
+    b = b[:2000]
+
+    scaler = StandardScaler()
+    A = scaler.fit_transform(A)
+    m, n = A.shape
 
     objective_function = LogisticLossFinDim(A=A, b=b)
     feasible_region = LpBall(dimension=A.shape[1], p=p)

@@ -1,6 +1,6 @@
 import random
 
-import numpy as np
+import autograd.numpy as np
 
 from all_functions.auxiliary_functions import distribution_to_string
 from all_functions.feasible_region import HilbertSpaceWhaba
