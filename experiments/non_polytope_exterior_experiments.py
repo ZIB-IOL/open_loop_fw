@@ -23,7 +23,7 @@ for p in ps:
     legend = False
     if p == ps[-1]:
         legend = True
-    file_name = "Lp" + "_" + str(p) + "_ball_" + "location" + "_" + str(location)
+    file_name = "lp" + "_" + str(p) + "_ball_" + "location" + "_" + str(location)
     feasible_region, objective_function, cst = uniformly_convex(DIMENSION, p=p, location=location, convexity=convexity)
 
     fw_step_size_rules = [

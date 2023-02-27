@@ -2,7 +2,7 @@ import random
 import autograd.numpy as np
 
 from all_functions.plotting import primal_gap_plotter, determine_y_lims, only_min
-from all_functions.problem_settings import uniformly_convex, uniformly_convex_logistic_regression, gisette
+from all_functions.problem_settings import gisette
 from all_functions.experiments_auxiliary_functions import run_experiment
 from global_ import *
 import matplotlib as mpl
@@ -18,7 +18,7 @@ for p in ps:
     legend = False
     if p == ps[-1]:
         legend = True
-    file_name = "gisette_" + "Lp" + "_" + str(p) + "_ball_" + "logistic_regression"
+    file_name = "gisette_" + "lp" + "_" + str(p) + "_ball_" + "logistic_regression"
     feasible_region, objective_function = gisette(p=p)
 
     fw_step_size_rules = [

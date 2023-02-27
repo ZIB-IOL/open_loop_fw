@@ -35,7 +35,7 @@ for p in ps:
     legend = False
     if p == ps[-1]:
         legend = True
-    file_name = "Lp" + "_" + str(p) + "_ball_" + "location" + "_" + str(location)
+    file_name = "lp" + "_" + str(p) + "_ball_" + "location" + "_" + str(location)
     feasible_region, objective_function, _ = uniformly_convex(DIMENSION, p=p, location=location, convexity=convexity)
     primal_gaps, labels = run_experiment(ITERATIONS, objective_function, feasible_region, run_more=0,
                                          fw_step_size_rules=fw_step_size_rules)

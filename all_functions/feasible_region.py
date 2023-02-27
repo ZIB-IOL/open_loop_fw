@@ -83,7 +83,7 @@ class HilbertSpaceWhaba:
 
 
 def lpnorm(vector, p):
-    """Computes the Lp norm of a vector"""
+    """Computes the lp norm of a vector"""
     if p == 1:
         return np.linalg.norm(vector, ord=1)
     elif p == 2:
@@ -99,7 +99,7 @@ def lpnorm(vector, p):
 
 
 class LpBall:
-    """A class used to represent the Lp ball of radius 1.
+    """A class used to represent the lp ball of radius 1.
 
     Args:
         dimension: integer, Optional
@@ -111,7 +111,7 @@ class LpBall:
 
     Methods:
         linear_minimization_oracle(v: np.ndarray, x: np.ndarray)
-            Solves the linear minimization problem min_g in Lp <v, g>.
+            Solves the linear minimization problem min_g in lp <v, g>.
         membership_oracle(x,epsilon: float):
             Determines whether x is in the feasible region, on the boundary, or exterior the feasible region.
         initial_point()
@@ -129,7 +129,7 @@ class LpBall:
     def linear_minimization_oracle(self,
                                    v: np.ndarray,
                                    x: np.ndarray):
-        """Solves the linear minimization problem min_g in Lp <v, g>.
+        """Solves the linear minimization problem min_g in lp <v, g>.
 
         Args:
             v: np.ndarray
@@ -351,12 +351,13 @@ class NuclearNormBall:
 
     def membership_oracle(self, x: np.ndarray, epsilon: float = 10e-10):
         """Determines whether x is in the interior, boundary, or exterior of the feasible region."""
-        norm = np.linalg.norm(x, 'nuc')
-        if (x >= -epsilon).all():
-            if abs(self.radius - norm) <= epsilon:
-                return "boundary"
-            elif (self.radius - norm) > epsilon:
-                return "interior"
+
+        x_mat = np.reshape(x, (self.m, self.n))
+        norm = np.linalg.norm(x_mat, 'nuc')
+        if abs(self.radius - norm) <= epsilon:
+            return "boundary"
+        elif (self.radius - norm) > epsilon:
+            return "interior"
         elif (self.radius - norm) < epsilon:
             return "exterior"
 
