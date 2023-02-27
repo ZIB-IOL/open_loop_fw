@@ -1,6 +1,7 @@
+# Logistic regression experiment over different lp-balls using the gisette dataset.
+
 import random
 import autograd.numpy as np
-
 from all_functions.plotting import primal_gap_plotter, determine_y_lims, only_min
 from all_functions.problem_settings import gisette
 from all_functions.experiments_auxiliary_functions import run_experiment

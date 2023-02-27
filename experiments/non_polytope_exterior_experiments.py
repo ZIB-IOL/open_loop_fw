@@ -1,7 +1,8 @@
+# Uniformly convex feasible region, not strongly convex objective, and unconstrained optimum in the exterior experiment.
+
+
 import random
-
 import autograd.numpy as np
-
 from all_functions.plotting import primal_gap_plotter, determine_y_lims, only_min
 from all_functions.problem_settings import uniformly_convex
 from all_functions.experiments_auxiliary_functions import run_experiment

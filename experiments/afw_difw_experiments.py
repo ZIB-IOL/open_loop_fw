@@ -1,6 +1,8 @@
+# Comparison of AFW and DIFW when the feasible region is a subset of the Boolean hypercube and the objective is
+# uniformly convex.
+
 from all_functions.plotting import primal_gap_plotter, determine_y_lims, only_min
 from all_functions.problem_settings import polytope_experiment, probability_simplex_interior_fast_ls_ss
-
 from all_functions.experiments_auxiliary_functions import run_experiment
 from global_ import *
 import matplotlib as mpl

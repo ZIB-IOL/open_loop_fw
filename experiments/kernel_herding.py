@@ -1,11 +1,10 @@
+# Kernel-herding experiments for both uniform and non-uniform densities.
+
 import random
-
 import autograd.numpy as np
-
 from all_functions.auxiliary_functions import distribution_to_string
 from all_functions.feasible_region import HilbertSpaceWhaba
 from all_functions.objective_function import confirm_rho_distribution, mu_from_rho, SquaredLoss
-
 from all_functions.plotting import primal_gap_plotter, determine_y_lims, only_min
 from all_functions.experiments_auxiliary_functions import run_experiment
 from global_ import *

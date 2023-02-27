@@ -1,3 +1,4 @@
+# performs an experiment that measures the local convergence rate of the FW algorithm
 
 from all_functions.plotting import contour_plotter
 from all_functions.problem_settings import polytope_experiment, probability_simplex_interior_fast_ls_ss
