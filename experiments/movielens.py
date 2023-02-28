@@ -15,9 +15,6 @@ mpl.rcParams['agg.path.chunksize'] = CHUNKSIZE
 mpl.rcParams['axes.linewidth'] = LINEWIDTH
 
 
-# ITERATIONS_MOVIELENS = 100
-# RUN_MORE_MOVIELENS = 300
-
 legend = True
 file_name = "movielens_" + "nuclear_norm_ball" + "_" + "collaborative_filtering"
 feasible_region, objective_function = movielens()

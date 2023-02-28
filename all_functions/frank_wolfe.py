@@ -7,7 +7,8 @@ import autograd.numpy as np
 def frank_wolfe(feasible_region,
                 objective_function,
                 step: dict,
-                n_iters: int = 100):
+                n_iters: int = 100,
+                store_iterates: bool = False):
     """Performs Frank-Wolfe/the herding algorithm.
 
         Args:
@@ -26,6 +27,8 @@ def frank_wolfe(feasible_region,
                     "number of iterations for line-search".
             n_iters: integer, Optional
                 The number of iterations. (Default is 100.)
+            store_iterates: bool, Optional
+                (Default is False.)
 
         Returns:
             iterate_list: list
@@ -51,6 +54,7 @@ def frank_wolfe(feasible_region,
     x_p_list = []
 
     for i in range(1, n_iters):
+        print("i: ", i)
         if isinstance(x, np.ndarray):
             gradient = objective_function.evaluate_gradient(x)
             p_fw, fw_gap, x_p = feasible_region.linear_minimization_oracle(gradient, x)
@@ -67,7 +71,8 @@ def frank_wolfe(feasible_region,
         else:
             x.update(p_fw, scalar=scalar)
         loss = objective_function.evaluate_loss(x)
-        iterate_list.append(x)
+        if store_iterates:
+            iterate_list.append(x)
         loss_list.append(loss)
         fw_gap_list.append(fw_gap)
         if loss < 10e-60:
@@ -78,7 +83,8 @@ def frank_wolfe(feasible_region,
 def away_step_frank_wolfe(feasible_region,
                           objective_function,
                           step: dict,
-                          n_iters: int = 100):
+                          n_iters: int = 100,
+                          store_iterats: bool = False):
     """Performs Away-Step Frank-Wolfe.
 
         Args:
@@ -90,6 +96,8 @@ def away_step_frank_wolfe(feasible_region,
                 A dictionnary containing the information about the step-size rule.
             n_iters: integer, Optional
                 The number of iterations. (Default is 100.)
+            store_iterates: bool, Optional
+                (Default is False.)
 
         Returns:
             iterate_list: list
@@ -189,7 +197,8 @@ def away_step_frank_wolfe(feasible_region,
 
         x = x + gamma * direction.flatten()
         loss = objective_function.evaluate_loss(x)
-        iterate_list.append(x)
+        if store_iterats:
+            iterate_list.append(x)
         loss_list.append(loss)
 
         if step["step type"] != "open-loop" and i > 1 and loss_list[-1] > 10e-10:
@@ -203,7 +212,8 @@ def decomposition_invariant_frank_wolfe(feasible_region,
                                         objective_function,
                                         step: dict,
                                         n_iters: int = 100,
-                                        epsilon: float = 1e-16):
+                                        epsilon: float = 1e-16,
+                                        store_iterates: bool = False):
     """Performs Decomposition-Invariant Frank-Wolfe.
 
         Args:
@@ -217,6 +227,8 @@ def decomposition_invariant_frank_wolfe(feasible_region,
                 The number of iterations. (Default is 100.)
             epsilon: float, Optional
                 Used as a tolerance in the construction of gradient tilde.
+            store_iterates: bool, Optional
+                (Default is False.)
 
         Returns:
             iterate_list: list
@@ -273,7 +285,8 @@ def decomposition_invariant_frank_wolfe(feasible_region,
             break
 
         iterate_list.append(x)
-        loss_list.append(loss)
+        if store_iterates:
+            loss_list.append(loss)
         fw_gap_list.append(fw_gap)
 
     return iterate_list, loss_list, fw_gap_list, x, x_p_list
@@ -282,7 +295,8 @@ def decomposition_invariant_frank_wolfe(feasible_region,
 def momentum_guided_frank_wolfe(feasible_region,
                                 objective_function,
                                 step: dict,
-                                n_iters: int = 100):
+                                n_iters: int = 100,
+                                store_iterates: bool = False):
     """Performs momentum-guided Frank-Wolfe.
 
         Args:
@@ -299,6 +313,8 @@ def momentum_guided_frank_wolfe(feasible_region,
                     follows: a / (b * iteration + c)
             n_iters: integer, Optional
                 The number of iterations. (Default is 100.)
+            store_iterates: bool, Optional
+                (Default is False.)
 
         Returns:
             iterate_list: list
@@ -327,16 +343,96 @@ def momentum_guided_frank_wolfe(feasible_region,
     x_p_list = []
 
     for i in range(1, n_iters):
+        print("i: ", i)
         scalar = objective_function.compute_step_size(i, x, v, gradient, step=step)
 
-        y = (1-scalar)*x + scalar*v
+        y = (1 - scalar) * x + scalar * v
         gradient = objective_function.evaluate_gradient(y)
-        theta = (1-scalar)*theta.flatten() + scalar*gradient.flatten()
-        v, fw_gap, x_p = feasible_region.linear_minimization_oracle(theta, x)
+        theta = (1 - scalar) * theta.flatten() + scalar * gradient.flatten()
+        v, _, _ = feasible_region.linear_minimization_oracle(theta, x)
+
+        # compute correct FW gap
+        _, fw_gap, x_p = feasible_region.linear_minimization_oracle(objective_function.evaluate_gradient(x), x)
+
         x_p_list.append(x_p)
-        x = (1-scalar)*x.flatten() + scalar*v.flatten()
+        x = (1 - scalar) * x.flatten() + scalar * v.flatten()
         loss = objective_function.evaluate_loss(x)
-        iterate_list.append(x)
+        if store_iterates:
+            iterate_list.append(x)
+        loss_list.append(loss)
+        fw_gap_list.append(fw_gap)
+        if loss < 10e-60:
+            break
+    return iterate_list, loss_list, fw_gap_list, x, x_p_list
+
+
+def primal_averaging_frank_wolfe(feasible_region,
+                                 objective_function,
+                                 step: dict,
+                                 n_iters: int = 100,
+                                 store_iterates: bool = False):
+    """Performs primal-averaging Frank-Wolfe.
+
+        Args:
+            feasible_region:
+                The type of feasible region.
+            objective_function: Optional
+                The type of objective function.
+            step: dict
+                A dictionnary containing the information about the step type. The dictionary can have the following arg-
+                uments:
+                    "step type": Choose from "open-loop".
+                Additional Arguments:
+                    For "open-loop", provide integer values for the keys "a", "b", "c" that affect the step type as
+                    follows: a / (b * iteration + c)
+            n_iters: integer, Optional
+                The number of iterations. (Default is 100.)
+            store_iterates: bool, Optional
+                (Default is False.)
+
+        Returns:
+            iterate_list: list
+                Returns a list containing the iterate at each iteration.
+            loss_list: list
+                Returns a list containing the loss at each iteration.
+            fw_gap_list: list
+                Returns a list containing the FW gap at each iteration.
+            x:
+                Returns x, the final iterate of the algorithm
+            x_p_list:
+                Returns a list containing the values of ||x_t - p_t|| at each iteration.
+
+        References:
+            [1] "Li, B., Coutino, M., Giannakis, G.B. and Leus, G., 2021. A momentum-guided frank-wolfe algorithm.
+            IEEE Transactions on Signal Processing, 69, pp.3597-3611."
+    """
+
+    x = feasible_region.initial_point()
+    v = x
+    theta = np.zeros(x.shape)
+    gradient = theta
+    loss_list = []
+    fw_gap_list = []
+    iterate_list = []
+    x_p_list = []
+
+    for i in range(1, n_iters):
+        print("i: ", i)
+        scalar = objective_function.compute_step_size(i, x, v, gradient, step=step)
+
+        y = (1 - scalar) * x + scalar * v
+        gradient = objective_function.evaluate_gradient(y)
+        theta = (1 - scalar) * theta.flatten() + scalar * gradient.flatten()
+        v, _, _ = feasible_region.linear_minimization_oracle(theta, x)
+
+        # compute correct FW gap
+        _, fw_gap, x_p = feasible_region.linear_minimization_oracle(objective_function.evaluate_gradient(x), x)
+
+        x_p_list.append(x_p)
+        x = (1 - scalar) * x.flatten() + scalar * v.flatten()
+        loss = objective_function.evaluate_loss(x)
+        if store_iterates:
+            iterate_list.append(x)
         loss_list.append(loss)
         fw_gap_list.append(fw_gap)
         if loss < 10e-60:
