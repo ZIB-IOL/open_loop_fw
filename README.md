@@ -23,27 +23,24 @@ $ conda activate open_loop_fw
 ```
 Navigate to ~/tmp
 
-Execute the experiments:
+To perform the experiments in the paper:
+
 ```python3 script
->>> python3 -m experiments.afw_difw_experiments
+>>> python3 -m experiments.non_polytope_exterior_experiments
+```
+```python3 script
+>>> python3 -m experiments.polytope_experiments
 ```
 ```python3 script
 >>> python3 -m experiments.kernel_herding
 ```
 ```python3 script
->>> python3 -m experiments.locally_accelerated_convergence_rate_experiments
+>>> python3 -m experiments.gisette
 ```
 ```python3 script
->>> python3 -m experiments.non_polytope_boundary_experiments
+>>> python3 -m experiments.movielens
 ```
-```python3 script
->>> python3 -m experiments.non_polytope_exterior_experiments
-```
-```python3 script
->>> python3 -m experiments.non_polytope_interior_experiments
-```
-```python3 script
->>> python3 -m experiments.polytope_experiments
-```
+
+
 
 The experiments are then stored in ~/tmp/experiments/figures.
