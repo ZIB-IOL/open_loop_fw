@@ -26,10 +26,10 @@ Navigate to ~/tmp
 To perform the experiments in the paper:
 
 ```python3 script
->>> python3 -m experiments.non_polytope_exterior_experiments
+>>> python3 -m experiments.exterior
 ```
 ```python3 script
->>> python3 -m experiments.polytope_experiments
+>>> python3 -m experiments.polytope
 ```
 ```python3 script
 >>> python3 -m experiments.kernel_herding
