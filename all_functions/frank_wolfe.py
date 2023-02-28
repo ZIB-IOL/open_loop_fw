@@ -54,7 +54,6 @@ def frank_wolfe(feasible_region,
     x_p_list = []
 
     for i in range(1, n_iters):
-        print("i: ", i)
         if isinstance(x, np.ndarray):
             gradient = objective_function.evaluate_gradient(x)
             p_fw, fw_gap, x_p = feasible_region.linear_minimization_oracle(gradient, x)
@@ -339,7 +338,6 @@ def momentum_guided_frank_wolfe(feasible_region,
     x_p_list = []
 
     for i in range(1, n_iters):
-        print("i: ", i)
         scalar = objective_function.compute_step_size(i, x, v, gradient, step=step)
 
         y = (1 - scalar) * x + scalar * v
@@ -411,7 +409,6 @@ def primal_averaging_frank_wolfe(feasible_region,
     x_p_list = []
 
     for i in range(1, n_iters):
-        print("i: ", i)
         scalar = objective_function.compute_step_size(i, x, v, gradient, step=step)
 
         y = (1 - scalar) * x + scalar * v

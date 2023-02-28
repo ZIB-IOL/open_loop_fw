@@ -23,8 +23,7 @@ fw_step_size_rules = [
     {"step type": "open-loop", "a": 4, "b": 1, "c": 4, "d": 1},
 ]
 
-iterations = 1000
-iterations_lmo = 1000
+
 
 rho = [np.random.rand(random.randint(2, 5), 1), np.random.rand(random.randint(2, 5), 1)]
 distribution_as_string = distribution_to_string(rho)
@@ -36,21 +35,21 @@ for mu in mus:
     legend = False
     if mu == mus[-1]:
         legend = True
-    feasible_region = HilbertSpaceWhaba(iterations_lmo=iterations_lmo)
+    feasible_region = HilbertSpaceWhaba(iterations_lmo=LMO_KH)
     objective_function = SquaredLoss(mu=mu)
     if mu is None:
         file_name = "kernel_herding_uniform"
     else:
         file_name = "kernel_herding_non_uniform"
 
-    primal_gaps, labels = run_experiment(iterations, objective_function, feasible_region,
+    primal_gaps, labels = run_experiment(ITERATIONS_KH, objective_function, feasible_region,
                                          fw_step_size_rules=fw_step_size_rules)
     primal_gaps = only_min(primal_gaps)
     primal_gap_plotter(y_data=primal_gaps,
                        labels=labels,
-                       iterations=iterations,
+                       iterations=ITERATIONS_KH,
                        file_name=file_name,
-                       x_lim=(1, iterations),
+                       x_lim=(1, ITERATIONS_KH),
                        y_lim=determine_y_lims(primal_gaps),
                        y_label=r'$\mathrm{min}_i  \ h_i$',
                        directory="figures/kernel_herding",

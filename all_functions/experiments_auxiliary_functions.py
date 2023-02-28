@@ -1,5 +1,5 @@
 from all_functions.frank_wolfe import frank_wolfe, decomposition_invariant_frank_wolfe, away_step_frank_wolfe, \
-    momentum_guided_frank_wolfe
+    momentum_guided_frank_wolfe, primal_averaging_frank_wolfe
 import autograd.numpy as np
 from scipy import stats
 
@@ -43,7 +43,8 @@ def run_experiment(iterations,
                    fw_step_size_rules: list = [],
                    difw_step_size_rules: list = [],
                    afw_step_size_rules: list = [],
-                   mfw_step_size_rules: list = []
+                   mfw_step_size_rules: list = [],
+                   pafw_step_size_rules: list = []
                    ):
     """
     Minimizes objective_function over feasible_region.
@@ -63,6 +64,8 @@ def run_experiment(iterations,
             The types of AFW step-size rules we want to run. (Default is [].)
         mfw_step_size_rules: list
             The types of MFW step-size rules we want to run. (Default is [].)
+        pafw_step_size_rules: list
+            The types of PAFW step-size rules we want to run. (Default is [].)
 
     Returns:
         Returns a list of lists of primal gaps and a list of labels.
@@ -83,21 +86,6 @@ def run_experiment(iterations,
             data_list = [loss_list[i] - loss_list[-1] for i in range(len(loss_list))][:iterations]
         data.append(data_list)
         labels.append(current_label)
-
-    for step in mfw_step_size_rules:
-        current_label = translate_step_types("MFW", step)
-
-        iterate_list, loss_list, fw_gap_list, x, x_p_list = momentum_guided_frank_wolfe(
-            feasible_region=feasible_region, objective_function=objective_function,
-            n_iters=(int(iterations + run_more)), step=step)
-
-        if run_more == 0:
-            data_list = loss_list
-        else:
-            data_list = [loss_list[i] - loss_list[-1] for i in range(len(loss_list))][:iterations]
-        data.append(data_list)
-        labels.append(current_label)
-
     for step in afw_step_size_rules:
         current_label = translate_step_types("AFW", step)
         iterate_list, loss_list, fw_gap_list, x, x_p_list = away_step_frank_wolfe(feasible_region=feasible_region,
@@ -112,7 +100,6 @@ def run_experiment(iterations,
             data_list = [loss_list[i] - loss_list[-1] for i in range(len(loss_list))][:iterations]
         data.append(data_list)
         labels.append(current_label)
-
     for step in difw_step_size_rules:
         current_label = translate_step_types("DIFW", step)
         iterate_list, loss_list, fw_gap_list, x, x_p_list = decomposition_invariant_frank_wolfe(
@@ -120,6 +107,32 @@ def run_experiment(iterations,
             objective_function=objective_function,
             n_iters=(int(iterations + run_more)),
             step=step)
+
+        if run_more == 0:
+            data_list = loss_list
+        else:
+            data_list = [loss_list[i] - loss_list[-1] for i in range(len(loss_list))][:iterations]
+        data.append(data_list)
+        labels.append(current_label)
+    for step in mfw_step_size_rules:
+        current_label = translate_step_types("MFW", step)
+
+        iterate_list, loss_list, fw_gap_list, x, x_p_list = momentum_guided_frank_wolfe(
+            feasible_region=feasible_region, objective_function=objective_function,
+            n_iters=(int(iterations + run_more)), step=step)
+
+        if run_more == 0:
+            data_list = loss_list
+        else:
+            data_list = [loss_list[i] - loss_list[-1] for i in range(len(loss_list))][:iterations]
+        data.append(data_list)
+        labels.append(current_label)
+    for step in pafw_step_size_rules:
+        current_label = translate_step_types("PAFW", step)
+
+        iterate_list, loss_list, fw_gap_list, x, x_p_list = primal_averaging_frank_wolfe(
+            feasible_region=feasible_region, objective_function=objective_function,
+            n_iters=(int(iterations + run_more)), step=step)
 
         if run_more == 0:
             data_list = loss_list
