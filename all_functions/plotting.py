@@ -9,7 +9,7 @@ def determine_y_lims(data):
     max_val = 1e-16
     min_val = 1e+16
     for entry in data:
-        min_val = max(min(min(entry) / 10, min_val), 1e-12)
+        min_val = max(min(min(entry) / 10, min_val), 1e-10)
         max_val = max(max(entry) * 10, max_val)
     return min_val, max_val
 
