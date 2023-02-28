@@ -75,8 +75,6 @@ def frank_wolfe(feasible_region,
             iterate_list.append(x)
         loss_list.append(loss)
         fw_gap_list.append(fw_gap)
-        if loss < 10e-60:
-            break
     return iterate_list, loss_list, fw_gap_list, x, x_p_list
 
 
@@ -281,8 +279,6 @@ def decomposition_invariant_frank_wolfe(feasible_region,
             x = x.flatten() + scalar * (p.flatten() - p_difw.flatten())
 
         loss = objective_function.evaluate_loss(x)
-        if loss < 10e-30:
-            break
 
         iterate_list.append(x)
         if store_iterates:
@@ -361,8 +357,6 @@ def momentum_guided_frank_wolfe(feasible_region,
             iterate_list.append(x)
         loss_list.append(loss)
         fw_gap_list.append(fw_gap)
-        if loss < 10e-60:
-            break
     return iterate_list, loss_list, fw_gap_list, x, x_p_list
 
 
@@ -421,8 +415,7 @@ def primal_averaging_frank_wolfe(feasible_region,
         scalar = objective_function.compute_step_size(i, x, v, gradient, step=step)
 
         y = (1 - scalar) * x + scalar * v
-        gradient = objective_function.evaluate_gradient(y)
-        theta = (1 - scalar) * theta.flatten() + scalar * gradient.flatten()
+        theta = objective_function.evaluate_gradient(y).flatten()
         v, _, _ = feasible_region.linear_minimization_oracle(theta, x)
 
         # compute correct FW gap
@@ -435,6 +428,4 @@ def primal_averaging_frank_wolfe(feasible_region,
             iterate_list.append(x)
         loss_list.append(loss)
         fw_gap_list.append(fw_gap)
-        if loss < 10e-60:
-            break
     return iterate_list, loss_list, fw_gap_list, x, x_p_list
