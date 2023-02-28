@@ -251,13 +251,11 @@ class UnitSimplex:
 
 
 def away_oracle(active_vertices: np.ndarray, direction: np.ndarray):
-    """Solves the maximization problem max_{i} in probability simplex or l1 ball <direction, active_vertices[:, i]>.
+    """Solves the maximization problem max_{i} in C <direction, active_vertices[:, i]>.
 
         Args:
             active_vertices: np.ndarray
-                A matrix whose column vectors are vertices of the probability simplex
             direction: np.ndarray
-                Gradient at x.
 
         Returns:
             active_vertices_idx: int
@@ -286,17 +284,30 @@ def vertex_among_active_vertices(active_vertices: np.ndarray, fw_vertex: np.ndar
             active_vertices, this value is None.
     """
     active_vertices = fd(active_vertices)
-    index = get_non_zero_indices(fw_vertex)
-    assert len(index) == 1, "Vertices should have exactly one non-zero entry."
-    index = index[0]
-    value = fd(fw_vertex)[index, 0]
-    crucial_row = active_vertices[index, :]
-    list_of_indices = get_non_zero_indices(crucial_row)
-    assert len(list_of_indices) <= 2, "Vertices should not occur twice in active_vertices."
-    for active_vertex_index in list_of_indices:
-        if crucial_row[active_vertex_index] * value > 0:
-            return active_vertex_index
+    num_cols = active_vertices.shape[1]
+    fw_vertex = fd(fw_vertex)
+    # Loop through the columns of active_vertices
+    for i in range(num_cols):
+        # Check if the ith column is identical to x
+        if np.array_equal(active_vertices[:, i], fw_vertex):
+            # Return the index of the identical column
+            return i
+    # If no identical column was found, return None
     return None
+
+
+    # active_vertices = fd(active_vertices)
+    # index = get_non_zero_indices(fw_vertex)
+    # assert len(index) == 1, "Vertices should have exactly one non-zero entry."
+    # index = index[0]
+    # value = fd(fw_vertex)[index, 0]
+    # crucial_row = active_vertices[index, :]
+    # list_of_indices = get_non_zero_indices(crucial_row)
+    # assert len(list_of_indices) <= 2, "Vertices should not occur twice in active_vertices."
+    # for active_vertex_index in list_of_indices:
+    #     if crucial_row[active_vertex_index] * value > 0:
+    #         return active_vertex_index
+    # return None
 
 
 class NuclearNormBall:

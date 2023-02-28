@@ -14,6 +14,7 @@ afw_step_size_rules = [
     {"step type": "line-search afw"},
     {"step type": "open-loop", "a": 2, "b": 1, "c": 2, "d": 1},
     {"step type": "open-loop", "a": 4, "b": 1, "c": 4, "d": 1},
+    {"step type": "open-loop", "a": 8, "b": 1, "c": 8, "d": 1},
 ]
 
 difw_step_size_rules = [
@@ -37,11 +38,9 @@ for rho in rhos:
         file_name = "probability_simplex_afw_difw_interior"
         feasible_region, objective_function = probability_simplex_interior_fast_ls_ss(DIMENSION)
 
-    run_more = 0
-    if rho == 2:
-        run_more = RUN_MORE
 
-    primal_gaps, labels = run_experiment(ITERATIONS, objective_function, feasible_region, run_more=run_more,
+
+    primal_gaps, labels = run_experiment(ITERATIONS, objective_function, feasible_region, run_more=RUN_MORE,
                                          afw_step_size_rules=afw_step_size_rules,
                                          difw_step_size_rules=difw_step_size_rules)
     primal_gaps = only_min(primal_gaps)
@@ -52,7 +51,6 @@ for rho in rhos:
                        x_lim=(1, ITERATIONS),
                        y_lim=determine_y_lims(primal_gaps),
                        y_label=r'$\mathrm{min}_i  \ h_i$',
-                       # y_label='Primal gap',
                        directory="figures/afw_difw",
                        legend=legend
                        )

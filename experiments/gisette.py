@@ -14,6 +14,8 @@ np.random.seed(RANDOM)
 mpl.rcParams['agg.path.chunksize'] = CHUNKSIZE
 mpl.rcParams['axes.linewidth'] = LINEWIDTH
 
+
+
 ps = [1, 2, 5]
 for p in ps:
     legend = False
@@ -23,7 +25,6 @@ for p in ps:
     feasible_region, objective_function = gisette(p=p)
 
     fw_step_size_rules = [
-        # {"step type": "open-loop", "a": 1, "b": 1, "c": 1, "d": 1},
         {"step type": "open-loop", "a": 2, "b": 1, "c": 2, "d": 1},
         {"step type": "open-loop", "a": 6, "b": 1, "c": 6, "d": 1},
     ]
@@ -31,15 +32,21 @@ for p in ps:
         {"step type": "open-loop", "a": 2, "b": 1, "c": 2, "d": 1},
         {"step type": "open-loop", "a": 6, "b": 1, "c": 6, "d": 1},
     ]
-
     pafw_step_size_rules = [
         {"step type": "open-loop", "a": 2, "b": 1, "c": 2, "d": 1},
         {"step type": "open-loop", "a": 6, "b": 1, "c": 6, "d": 1},
     ]
+    afw_step_size_rules = [
+        {"step type": "open-loop", "a": 2, "b": 1, "c": 2, "d": 1},
+        {"step type": "open-loop", "a": 6, "b": 1, "c": 6, "d": 1},
+    ]
+
     primal_gaps, labels = run_experiment(ITERATIONS_GISETTE, objective_function, feasible_region,
-                                         run_more=RUN_MORE_GISETTE, fw_step_size_rules=fw_step_size_rules,
+                                         run_more=RUN_MORE_GISETTE,
+                                         fw_step_size_rules=fw_step_size_rules,
                                          mfw_step_size_rules=mfw_step_size_rules,
-                                         pafw_step_size_rules=pafw_step_size_rules)
+                                         pafw_step_size_rules=pafw_step_size_rules,
+                                         afw_step_size_rules=afw_step_size_rules)
 
     primal_gaps = only_min(primal_gaps)
     primal_gap_plotter(y_data=primal_gaps,

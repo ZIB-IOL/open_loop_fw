@@ -6,7 +6,7 @@ COLORS = [ 'red', 'blue', 'orange',  'green', 'purple', 'magenta', 'cyan', 'oliv
 
 
 
-MARKERS = ['^', 's', 'p', 'X', 'o', 'v', 'd']
+MARKERS = ['^', 's', 'p', 'X', 'o', 'v', 'D', 'P']
 MARKER_SIZE = 20
 MARK_EVERY = 0.1
 LINEWIDTH = 5

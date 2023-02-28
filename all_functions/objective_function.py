@@ -1,3 +1,5 @@
+import numpy
+
 from all_functions.auxiliary_functions import fd
 
 from all_functions.hilbert_space_element import ElementMarginalPolytope
@@ -388,6 +390,7 @@ class LogisticLossFinDim:
         self.b = b.flatten()
         self.m, self.n = A.shape
         self.objective = lambda x: np.mean(np.log(1 + np.exp(-self.b * np.dot(self.A, x))))
+        self.L = numpy.linalg.eigvalsh(1/self.m * self.A.T.dot(self.A))[-1]
 
     def evaluate_loss(self, x: np.ndarray):
         """Evaluates the loss at x."""
@@ -443,6 +446,7 @@ class LogisticLossFinDim:
 
         return float(optimal_distance)
 
+
 class HuberLossCollaborativeFilteringFinDim:
     """Represents the Huber loss function for collaborative filtering f(X) = 1/|I| sum_{(i,j)in I} h_rho (A_ij - X_ij),
     where h_rho is the Huber loss with parameter rho > 0: h_rho = t^2/2 if |t|<= rho and rho(|t| - rho/2) if |t|>rho
@@ -465,11 +469,11 @@ class HuberLossCollaborativeFilteringFinDim:
     def __init__(self, A: np.ndarray, rho: float = 1.0):
         self.A = A
         self.m, self.n = A.shape
-        self.mn = self.m*self.n
+        self.mn = self.m * self.n
         self.a = np.reshape(A, self.mn)
-        self.N = np.sum(~np.isnan(self.a)) # number of observed entries
+        self.N = np.sum(~np.isnan(self.a))  # number of observed entries
         self.rho = rho
-        self.objective = lambda x: np.sum(huber(self.rho, np.nan_to_num(self.a-x)))/self.N
+        self.objective = lambda x: np.sum(huber(self.rho, np.nan_to_num(self.a - x))) / self.N
         self.derivative = np.vectorize(lambda t: t if abs(t) <= self.rho else self.rho if t > self.rho else -self.rho)
 
     def evaluate_loss(self, x: np.ndarray):
@@ -479,7 +483,7 @@ class HuberLossCollaborativeFilteringFinDim:
     def evaluate_gradient(self, x: np.ndarray):
         """Evaluates the gradient of f at x."""
         der_huber = np.vectorize(lambda t: t if abs(t) <= self.rho else self.rho if t > self.rho else -self.rho)
-        grad_objective = lambda x: - der_huber(np.nan_to_num(self.a - x))/self.N
+        grad_objective = lambda x: - der_huber(np.nan_to_num(self.a - x)) / self.N
         return grad_objective(x)
 
     def compute_step_size(self,
