@@ -279,10 +279,11 @@ def decomposition_invariant_frank_wolfe(feasible_region,
 
         loss = objective_function.evaluate_loss(x)
 
-        iterate_list.append(x)
+
         if store_iterates:
-            loss_list.append(loss)
+            iterate_list.append(x)
         fw_gap_list.append(fw_gap)
+        loss_list.append(loss)
 
     return iterate_list, loss_list, fw_gap_list, x, x_p_list
 

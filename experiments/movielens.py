@@ -25,16 +25,15 @@ for radius in radii:
 
     fw_step_size_rules = [
         {"step type": "open-loop", "a": 2, "b": 1, "c": 2, "d": 1},
-        {"step type": "open-loop", "a": 4, "b": 1, "c": 4, "d": 1},
+        {"step type": "open-loop", "a": 6, "b": 1, "c": 6, "d": 1},
     ]
     mfw_step_size_rules = [
         {"step type": "open-loop", "a": 2, "b": 1, "c": 2, "d": 1},
-        {"step type": "open-loop", "a": 4, "b": 1, "c": 4, "d": 1},
+        {"step type": "open-loop", "a": 6, "b": 1, "c": 6, "d": 1},
     ]
-
     pafw_step_size_rules = [
-            {"step type": "open-loop", "a": 2, "b": 1, "c": 2, "d": 1},
-            {"step type": "open-loop", "a": 4, "b": 1, "c": 4, "d": 1},
+        {"step type": "open-loop", "a": 2, "b": 1, "c": 2, "d": 1},
+        {"step type": "open-loop", "a": 6, "b": 1, "c": 6, "d": 1},
         ]
     primal_gaps, labels = run_experiment(ITERATIONS_MOVIELENS, objective_function, feasible_region,
                                          run_more=RUN_MORE_MOVIELENS, fw_step_size_rules=fw_step_size_rules,

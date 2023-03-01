@@ -37,8 +37,8 @@ for p in ps:
         {"step type": "open-loop", "a": 6, "b": 1, "c": 6, "d": 1},
     ]
     afw_step_size_rules = [
-        {"step type": "open-loop", "a": 2, "b": 1, "c": 2, "d": 1},
-        {"step type": "open-loop", "a": 6, "b": 1, "c": 6, "d": 1},
+        # {"step type": "open-loop", "a": 2, "b": 1, "c": 2, "d": 1},
+        # {"step type": "open-loop", "a": 6, "b": 1, "c": 6, "d": 1},
     ]
 
     primal_gaps, labels = run_experiment(ITERATIONS_GISETTE, objective_function, feasible_region,

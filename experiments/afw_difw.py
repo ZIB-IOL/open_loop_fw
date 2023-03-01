@@ -11,16 +11,16 @@ mpl.rcParams['agg.path.chunksize'] = CHUNKSIZE
 mpl.rcParams['axes.linewidth'] = LINEWIDTH
 
 afw_step_size_rules = [
-    {"step type": "line-search afw"},
+    # {"step type": "line-search afw"},
     {"step type": "open-loop", "a": 2, "b": 1, "c": 2, "d": 1},
     {"step type": "open-loop", "a": 4, "b": 1, "c": 4, "d": 1},
-    {"step type": "open-loop", "a": 8, "b": 1, "c": 8, "d": 1},
+    # {"step type": "open-loop", "a": 8, "b": 1, "c": 8, "d": 1},
 ]
 
 difw_step_size_rules = [
-    {"step type": "line-search difw probability simplex"},
+    # {"step type": "line-search difw probability simplex"},
     {"step type": "open-loop", "a": 2, "b": 1, "c": 2, "d": 1},
-    {"step type": "open-loop", "a": 4, "b": 1, "c": 4, "d": 1},
+    # {"step type": "open-loop", "a": 4, "b": 1, "c": 4, "d": 1},
     {"step type": "open-loop", "a": 8, "b": 1, "c": 8, "d": 1},
 ]
 
@@ -43,6 +43,8 @@ for rho in rhos:
     primal_gaps, labels = run_experiment(ITERATIONS, objective_function, feasible_region, run_more=RUN_MORE,
                                          afw_step_size_rules=afw_step_size_rules,
                                          difw_step_size_rules=difw_step_size_rules)
+
+
     primal_gaps = only_min(primal_gaps)
     primal_gap_plotter(y_data=primal_gaps,
                        labels=labels,
