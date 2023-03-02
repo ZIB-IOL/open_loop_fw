@@ -38,22 +38,19 @@ for rho in rhos:
         file_name = "probability_simplex_afw_difw_interior"
         feasible_region, objective_function = probability_simplex_interior_fast_ls_ss(DIMENSION)
 
-
-
-    primal_gaps, labels = run_experiment(ITERATIONS, objective_function, feasible_region, run_more=RUN_MORE,
+    primal_gaps, labels = run_experiment(ITERATIONS_AFW_DIFW, objective_function, feasible_region,
+                                         run_more=RUN_MORE_AFW_DIFW,
                                          afw_step_size_rules=afw_step_size_rules,
                                          difw_step_size_rules=difw_step_size_rules)
-
 
     primal_gaps = only_min(primal_gaps)
     primal_gap_plotter(y_data=primal_gaps,
                        labels=labels,
-                       iterations=ITERATIONS,
+                       iterations=ITERATIONS_AFW_DIFW,
                        file_name=file_name,
-                       x_lim=(1, ITERATIONS),
+                       x_lim=(1, ITERATIONS_AFW_DIFW),
                        y_lim=determine_y_lims(primal_gaps),
                        y_label=r'$\mathrm{min}_i  \ h_i$',
                        directory="figures/afw_difw",
                        legend=legend
                        )
-
