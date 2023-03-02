@@ -125,7 +125,6 @@ def away_step_frank_wolfe(feasible_region,
     l = 1
 
     for i in range(1, n_iters):
-
         gradient = objective_function.evaluate_gradient(x).flatten()
         p_fw, fw_gap, x_p = feasible_region.linear_minimization_oracle(gradient, x)
         direction_fw = p_fw.flatten() - x.flatten()
