@@ -15,7 +15,7 @@ mpl.rcParams['agg.path.chunksize'] = CHUNKSIZE
 mpl.rcParams['axes.linewidth'] = LINEWIDTH
 
 
-radii = [2500]
+radii = [2000]
 for radius in radii:
     legend = False
     if radius == radii[-1]:
@@ -49,5 +49,6 @@ for radius in radii:
                        y_lim=determine_y_lims(primal_gaps),
                        y_label=r'$\mathrm{min}_i  \ h_i$',
                        directory="figures/movielens_nuclear_norm_ball_collaborative_filtering",
-                       legend=legend
+                       legend=legend,
+                       legend_location="lower left"
                        )

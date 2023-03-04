@@ -54,7 +54,8 @@ def primal_gap_plotter(y_data: list,
                        mark_every: float = MARK_EVERY,
                        fontsize: int = FONT_SIZE,
                        fontsize_legend: int = FONT_SIZE_LEGEND,
-                       legend: bool = True):
+                       legend: bool = True,
+                       legend_location: string = "upper right"):
     """Plots the data that is passed and saves it under "/DIRECTORY/" + str(file_name) + ".png".
 
     Args:
@@ -99,6 +100,8 @@ def primal_gap_plotter(y_data: list,
             (Default is FONT_SIZE_LEGEND.)
         legend: bool, Optional
             (Default is TRUE.)
+        legend_location: string, Optional
+            (Default is "upper right".)
 
     """
     fig = plt.figure()
@@ -113,7 +116,7 @@ def primal_gap_plotter(y_data: list,
         plt.plot(y_data[i], linestyle=styles[i], color=colors[i], label=labels[i], linewidth=linewidth,
                  marker=markers[i], markersize=marker_size, markevery=mark_every)
     if legend:
-        plt.legend(fontsize=fontsize_legend, loc="upper right")
+        plt.legend(fontsize=fontsize_legend, loc=legend_location)
     plt.title(title, fontsize=fontsize)
     plt.ylabel(y_label, fontsize=fontsize)
     plt.xscale(x_scale)
