@@ -56,6 +56,6 @@ for p in ps:
                        x_lim=(1, ITERATIONS_GISETTE),
                        y_lim=determine_y_lims(primal_gaps),
                        y_label=r'$\mathrm{min}_i  \ h_i$',
-                       directory="figures/gisette_logistic_regression",
+                       directory="experiments/figures/gisette_logistic_regression",
                        legend=legend
                        )

@@ -51,6 +51,6 @@ for rho in rhos:
                        x_lim=(1, ITERATIONS_AFW_DIFW),
                        y_lim=determine_y_lims(primal_gaps),
                        y_label=r'$\mathrm{min}_i  \ h_i$',
-                       directory="figures/afw_difw",
+                       directory="experiments/figures/afw_difw",
                        legend=legend
                        )

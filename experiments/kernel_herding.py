@@ -20,7 +20,6 @@ fw_step_size_rules = [
     {"step type": "line-search"},
     {"step type": "open-loop", "a": 1, "b": 1, "c": 1, "d": 1},
     {"step type": "open-loop", "a": 2, "b": 1, "c": 2, "d": 1},
-    # {"step type": "open-loop", "a": 4, "b": 1, "c": 4, "d": 1},
 ]
 
 
@@ -52,6 +51,6 @@ for mu in mus:
                        x_lim=(1, ITERATIONS_KH),
                        y_lim=determine_y_lims(primal_gaps),
                        y_label=r'$\mathrm{min}_i  \ h_i$',
-                       directory="figures/kernel_herding",
+                       directory="experiments/figures/kernel_herding",
                        legend=legend
                        )

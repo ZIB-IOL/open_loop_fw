@@ -43,6 +43,6 @@ for rho in rhos:
                     ticks_min=0.8,
                     ticks_max=2.05,
                     n_ticks=9,
-                    directory="figures/locally_accelerated_convergence_rate",
+                    directory="experiments/figures/locally_accelerated_convergence_rate",
                     file_name=file_name)
 

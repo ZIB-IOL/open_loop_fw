@@ -48,7 +48,7 @@ for radius in radii:
                        x_lim=(1, ITERATIONS_MOVIELENS),
                        y_lim=determine_y_lims(primal_gaps),
                        y_label=r'$\mathrm{min}_i  \ h_i$',
-                       directory="figures/movielens_nuclear_norm_ball_collaborative_filtering",
+                       directory="experiments/figures/movielens_nuclear_norm_ball_collaborative_filtering",
                        legend=legend,
                        legend_location="lower left"
                        )
@@ -86,7 +86,7 @@ for radius in radii:
                        x_lim=(1, ITERATIONS_MOVIELENS),
                        y_lim=determine_y_lims(primal_gaps),
                        y_label=r'$\mathrm{min}_i  \ h_i$',
-                       directory="figures/movielens_nuclear_norm_ball_collaborative_filtering",
+                       directory="experiments/figures/movielens_nuclear_norm_ball_collaborative_filtering",
                        legend=legend,
                        legend_location="lower left"
                        )

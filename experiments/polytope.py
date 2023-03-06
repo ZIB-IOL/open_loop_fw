@@ -37,6 +37,6 @@ for rho in rhos:
                        x_lim=(1, ITERATIONS),
                        y_lim=determine_y_lims(primal_gaps),
                        y_label=r'$\mathrm{min}_i  \ h_i$',
-                       directory="figures/polytope",
+                       directory="experiments/figures/polytope",
                        legend=legend
                        )
