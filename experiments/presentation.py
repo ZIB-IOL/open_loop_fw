@@ -72,32 +72,32 @@ rho = confirm_rho_distribution(rho)
 mu = mu_from_rho(rho)
 # mus = [None, mu]
 
-# for mus in [[None], [mu]]:
-#     for mu in mus:
-#         legend = False
-#         if mu == mus[-1]:
-#             legend = True
-#         feasible_region = HilbertSpaceWhaba(iterations_lmo=iterations_lmo)
-#         objective_function = SquaredLoss(mu=mu)
-#         if mu is None:
-#             file_name = "kernel_herding_uniform"
-#         else:
-#             file_name = "kernel_herding_non_uniform"
-#
-#         primal_gaps, labels = run_experiment(iterations, objective_function, feasible_region,
-#                                              fw_step_size_rules=fw_step_size_rules)
-#         primal_gaps = only_min(primal_gaps)
-#         labels = ["line-search", "open-loop"]
-#         primal_gap_plotter(y_data=primal_gaps,
-#                            labels=labels,
-#                            iterations=iterations,
-#                            file_name=file_name,
-#                            x_lim=(1, iterations),
-#                            y_lim=determine_y_lims(primal_gaps),
-#                            y_label=r'$\mathrm{min}_i  \ h_i$',
-#                            directory="experiments/figures/presentation",
-#                            legend=legend
-#                            )
+for mus in [[None], [mu]]:
+    for mu in mus:
+        legend = False
+        if mu == mus[-1]:
+            legend = True
+        feasible_region = HilbertSpaceWhaba(iterations_lmo=iterations_lmo)
+        objective_function = SquaredLoss(mu=mu)
+        if mu is None:
+            file_name = "kernel_herding_uniform"
+        else:
+            file_name = "kernel_herding_non_uniform"
+
+        primal_gaps, labels = run_experiment(iterations, objective_function, feasible_region,
+                                             fw_step_size_rules=fw_step_size_rules)
+        primal_gaps = only_min(primal_gaps)
+        labels = ["line-search", "open-loop"]
+        primal_gap_plotter(y_data=primal_gaps,
+                           labels=labels,
+                           iterations=iterations,
+                           file_name=file_name,
+                           x_lim=(1, iterations),
+                           y_lim=determine_y_lims(primal_gaps),
+                           y_label=r'$\mathrm{min}_i  \ h_i$',
+                           directory="experiments/figures/presentation",
+                           legend=legend
+                           )
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -196,44 +196,4 @@ for p in ps:
                        y_label=r'$\mathrm{min}_i  \ h_i$',
                        directory="experiments/figures/presentation",
                        legend=legend
-                       )
-
-
-
-radii = [3000]
-for radius in radii:
-    legend = False
-    if radius == radii[-1]:
-        legend = True
-    file_name = "movielens_" + "nuclear_norm_ball" + "_" + "collaborative_filtering" + "_" + str(radius)
-    feasible_region, objective_function = movielens(radius)
-
-    fw_step_size_rules = [
-        {"step type": "open-loop", "a": 2, "b": 1, "c": 2, "d": 1},
-        {"step type": "open-loop", "a": 6, "b": 1, "c": 6, "d": 1},
-    ]
-    mfw_step_size_rules = [
-        {"step type": "open-loop", "a": 2, "b": 1, "c": 2, "d": 1},
-        {"step type": "open-loop", "a": 6, "b": 1, "c": 6, "d": 1},
-    ]
-    pafw_step_size_rules = [
-        # {"step type": "open-loop", "a": 2, "b": 1, "c": 2, "d": 1},
-        # {"step type": "open-loop", "a": 6, "b": 1, "c": 6, "d": 1},
-        ]
-    primal_gaps, labels = run_experiment(ITERATIONS_MOVIELENS, objective_function, feasible_region,
-                                         run_more=RUN_MORE_MOVIELENS, fw_step_size_rules=fw_step_size_rules,
-                                         mfw_step_size_rules=mfw_step_size_rules,
-                                         pafw_step_size_rules=pafw_step_size_rules)
-
-    primal_gaps = only_min(primal_gaps)
-    primal_gap_plotter(y_data=primal_gaps,
-                       labels=labels,
-                       iterations=ITERATIONS_MOVIELENS,
-                       file_name=file_name,
-                       x_lim=(1, ITERATIONS_MOVIELENS),
-                       y_lim=determine_y_lims(primal_gaps),
-                       y_label=r'$\mathrm{min}_i  \ h_i$',
-                       directory="experiments/figures/presentation",
-                       legend=legend,
-                       legend_location="lower left"
                        )
