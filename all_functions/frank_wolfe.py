@@ -331,8 +331,8 @@ def momentum_guided_frank_wolfe(feasible_region,
 
     x = feasible_region.initial_point()
     v = x
-    theta = np.zeros(x.shape)
-    gradient = theta
+    w = np.zeros(x.shape)
+    gradient = w
     loss_list = []
     fw_gap_list = []
     iterate_list = []
@@ -343,8 +343,8 @@ def momentum_guided_frank_wolfe(feasible_region,
 
         y = (1 - scalar) * x + scalar * v
         gradient = objective_function.evaluate_gradient(y)
-        theta = (1 - scalar) * theta.flatten() + scalar * gradient.flatten()
-        v, _, _ = feasible_region.linear_minimization_oracle(theta, x)
+        w = (1 - scalar) * w.flatten() + scalar * gradient.flatten()
+        v, _, _ = feasible_region.linear_minimization_oracle(w, x)
 
         # compute correct FW gap
         _, fw_gap, x_p = feasible_region.linear_minimization_oracle(objective_function.evaluate_gradient(x), x)
@@ -396,14 +396,14 @@ def primal_averaging_frank_wolfe(feasible_region,
                 Returns a list containing the values of ||x_t - p_t|| at each iteration.
 
         References:
-            [1] "Li, B., Coutino, M., Giannakis, G.B. and Leus, G., 2021. A momentum-guided frank-wolfe algorithm.
-            IEEE Transactions on Signal Processing, 69, pp.3597-3611."
+            [1] "Guanghui Lan. The complexity of large-scale convex programming under a linear optimization oracle.
+            arXiv preprint arXiv:1309.5550, 2013."
     """
 
     x = feasible_region.initial_point()
     v = x
-    theta = np.zeros(x.shape)
-    gradient = theta
+    w = np.zeros(x.shape)
+    gradient = w
     loss_list = []
     fw_gap_list = []
     iterate_list = []
@@ -413,8 +413,8 @@ def primal_averaging_frank_wolfe(feasible_region,
         scalar = objective_function.compute_step_size(i, x, v, gradient, step=step)
 
         y = (1 - scalar) * x + scalar * v
-        theta = objective_function.evaluate_gradient(y).flatten()
-        v, _, _ = feasible_region.linear_minimization_oracle(theta, x)
+        w = objective_function.evaluate_gradient(y).flatten()
+        v, _, _ = feasible_region.linear_minimization_oracle(w, x)
 
         # compute correct FW gap
         _, fw_gap, x_p = feasible_region.linear_minimization_oracle(objective_function.evaluate_gradient(x), x)

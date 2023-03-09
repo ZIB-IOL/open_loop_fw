@@ -40,9 +40,9 @@ class HilbertSpaceWhaba:
                                    objective_function: SquaredLoss,
                                    x: ElementMarginalPolytope,
                                    ):
-        """Solves the linear minimization problem min_p in C <x - mu, p>.
+        """Solves the linear minimization problem min_p in C <x - mu, fw_vertex>.
 
-        Returns the element p_t in the Hilbert space H such that <x - mu, p> is minimized.
+        Returns the element p_t in the Hilbert space H such that <x - mu, fw_vertex> is minimized.
 
         Args:
             objective_function: instance of an objective function class
@@ -51,16 +51,16 @@ class HilbertSpaceWhaba:
                 An instance of ElementMarginalPolytope.
 
         Returns:
-            p: instance of ElementMarginalPolytope
+            fw_vertex: instance of ElementMarginalPolytope
                 An instance of ElementMarginalPolytope which is the approximate solution to the linear minimization
                 problem.
-            wolfe_gap: float
+            fw_gap: float
                 The FW gap.
         """
 
         optimal_value = 10e16
         optimal_point = None
-        p = None
+        fw_vertex = None
         for idx in range(0, self.iterations_lmo):
             current_point = idx / self.iterations_lmo
             current_p = ElementMarginalPolytope(np.array([1]), np.array([current_point]))
@@ -68,13 +68,13 @@ class HilbertSpaceWhaba:
             if current_value < optimal_value:
                 optimal_value = current_value
                 optimal_point = current_point
-                p = current_p
+                fw_vertex = current_p
 
         assert optimal_point is not None, "Linear minimization oracle did not find a correct point."
-        assert p is not None, "Linear minimization oracle did not find a correct point."
+        assert fw_vertex is not None, "Linear minimization oracle did not find a correct point."
 
-        wolfe_gap = objective_function.evaluate_gradient(x, x) - optimal_value
-        return p, wolfe_gap
+        fw_gap = objective_function.evaluate_gradient(x, x) - optimal_value
+        return fw_vertex, fw_gap
 
     def initial_point(self):
         """Returns the initial vertex."""
@@ -138,7 +138,7 @@ class LpBall:
         Returns:
             fw_vertex: np.ndarray
                 The solution to the linear minimization problem.
-            wolfe_gap: float
+            fw_gap: float
                 The FW gap.
             distance_iterate_fw_vertex: float
                 The distance between the iterate x and the FW vertex fw_vertex.
@@ -162,9 +162,9 @@ class LpBall:
             fw_vertex = -np.sign(v) * np.abs(v) ** (self.q - 1) / (
                     (lpnorm(v, self.q)) ** (self.q - 1))
             assert abs(lpnorm(fw_vertex, self.p) - 1) < 10e-10, "p is not in the feasible region."
-        wolfe_gap = float(fd(v).T.dot(fd(x)) - fd(v).T.dot(fd(fw_vertex)))
+        fw_gap = float(fd(v).T.dot(fd(x)) - fd(v).T.dot(fd(fw_vertex)))
         distance_iterate_fw_vertex = np.linalg.norm(x.flatten() - fw_vertex.flatten())
-        return fw_vertex, wolfe_gap, distance_iterate_fw_vertex
+        return fw_vertex, fw_gap, distance_iterate_fw_vertex
 
     def membership_oracle(self, x: np.ndarray, epsilon: float = 10e-10):
         """Determines whether x is in the interior, boundary, or exterior of the feasible region."""
@@ -216,21 +216,21 @@ class UnitSimplex:
             x: np.ndarray
 
         Returns:
-            p: np.ndarray
+            fw_vertex: np.ndarray
                 The solution to the linear minimization problem.
-            wolfe_gap: float
+            fw_gap: float
                 The FW gap.
             distance_iterate_fw_vertex: float
                 The distance between the iterate x and the FW vertex fw_vertex.
         """
         tmp_pos = v.argmin()
-        p = np.zeros(self.dimension)
-        p[tmp_pos] = 1
-        assert self.membership_oracle(p) in ["boundary", "interior"], "p is not in the feasible region."
-        wolfe_gap = float(v.T.dot(fd(x)) - v.T.dot(fd(p)))
+        fw_vertex = np.zeros(self.dimension)
+        fw_vertex[tmp_pos] = 1
+        assert self.membership_oracle(fw_vertex) in ["boundary", "interior"], "fw_vertex is not in the feasible region."
+        fw_gap = float(v.T.dot(fd(x)) - v.T.dot(fd(fw_vertex)))
 
-        pt_xt = np.linalg.norm(x.flatten() - p.flatten())
-        return p, wolfe_gap, pt_xt
+        pt_xt = np.linalg.norm(x.flatten() - fw_vertex.flatten())
+        return fw_vertex, fw_gap, pt_xt
 
     def membership_oracle(self, x: np.ndarray, epsilon: float = 10e-10):
         """Determines whether x is in the interior, boundary, or exterior of the feasible region."""
@@ -294,21 +294,6 @@ def vertex_among_active_vertices(active_vertices: np.ndarray, fw_vertex: np.ndar
             return i
     # If no identical column was found, return None
     return None
-
-
-    # active_vertices = fd(active_vertices)
-    # index = get_non_zero_indices(fw_vertex)
-    # assert len(index) == 1, "Vertices should have exactly one non-zero entry."
-    # index = index[0]
-    # value = fd(fw_vertex)[index, 0]
-    # crucial_row = active_vertices[index, :]
-    # list_of_indices = get_non_zero_indices(crucial_row)
-    # assert len(list_of_indices) <= 2, "Vertices should not occur twice in active_vertices."
-    # for active_vertex_index in list_of_indices:
-    #     if crucial_row[active_vertex_index] * value > 0:
-    #         return active_vertex_index
-    # return None
-
 
 class NuclearNormBall:
     """A class used to represent the nuclear norm ball in R^{m x n}.
