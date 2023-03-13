@@ -42,7 +42,7 @@ for rho in rhos:
                        file_name=file_name,
                        x_lim=(1, ITERATIONS),
                        y_lim=determine_y_lims(primal_gaps),
-                       y_label=r'$\mathrm{min}_i  \ f(x_i) - f(x^*)$',
+                       y_label=r'$\mathrm{min}_i  \ h_i$',
                        directory="experiments/figures/presentation",
                        legend=legend
                        )
