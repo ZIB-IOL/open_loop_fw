@@ -1,7 +1,7 @@
 # Acceleration of Frank-Wolfe Algorithms with Open-Loop Step-Sizes
 
 Code for the paper:
-Wirth, E., Pokutta, S., and Kerdreux, T. (2023). Acceleration of Frank-Wolfe Algorithms with Open-Loop Step-Sizes. In Proceedings of AISTATS.
+[Wirth, E., Kerdreux, T. and Pokutta, S., 2023, April. Acceleration of Frank-Wolfe Algorithms with Open-Loop Step-Sizes. In International Conference on Artificial Intelligence and Statistics (pp. 77-100). PMLR.](https://proceedings.mlr.press/v206/wirth23a.html)
 
 
 ## Installation guide
