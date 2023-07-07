@@ -189,8 +189,6 @@ class UnitSimplex:
     Args:
         dimension: integer, Optional
             The number of data points. (Default is 400.)
-        radius: float, Optional
-            (Default is 1.0.)
 
     Methods:
         linear_minimization_oracle(v: np.ndarray, x: np.ndarray)
@@ -201,10 +199,8 @@ class UnitSimplex:
             Returns the initial vertex.
     """
 
-    def __init__(self, dimension: int = 400, radius: float = 1.0):
+    def __init__(self, dimension: int = 400):
         self.dimension = dimension
-        self.radius = radius
-        self.diameter = 2 * self.radius
 
     def linear_minimization_oracle(self,
                                    v: np.ndarray,
@@ -236,11 +232,11 @@ class UnitSimplex:
         """Determines whether x is in the interior, boundary, or exterior of the feasible region."""
         norm = lpnorm(x, 1)
         if (x >= -epsilon).all():
-            if abs(self.radius - norm) <= epsilon:
+            if abs(1 - norm) <= epsilon:
                 return "boundary"
-            elif (self.radius - norm) > epsilon:
+            elif (1 - norm) > epsilon:
                 return "interior"
-        elif (self.radius - norm) < epsilon:
+        elif (1 - norm) < epsilon:
             return "exterior"
 
     def initial_point(self):
@@ -248,7 +244,7 @@ class UnitSimplex:
         x = np.zeros((self.dimension, 1))
         x[0] = 1
         return x
-
+        
 
 def away_oracle(active_vertices: np.ndarray, direction: np.ndarray):
     """Solves the maximization problem max_{i} in C <direction, active_vertices[:, i]>.
