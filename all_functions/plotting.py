@@ -1,6 +1,8 @@
-import matplotlib.pyplot as plt
-import autograd.numpy as np
 from pathlib import Path
+
+import autograd.numpy as np
+import matplotlib.pyplot as plt
+
 from global_ import *
 
 
@@ -139,7 +141,7 @@ def primal_gap_plotter(y_data: list,
     if file_name is not None:
         directory = "./" + directory + "/"
         Path(directory).mkdir(parents=True, exist_ok=True)
-        plt.savefig(directory + str(file_name) + ".png", dpi=300, bbox_inches='tight')
+        plt.savefig(directory + str(file_name) + ".pdf", dpi=300, bbox_inches='tight')
     plt.close()
 
 
