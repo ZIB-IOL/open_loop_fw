@@ -101,22 +101,22 @@ def lpnorm(vector, p):
 class LpBall:
     """A class used to represent the lp ball of radius 1.
 
-     Args:
-         dimension: integer, Optional
-             The number of data points.
-         p: float, Optional
-             Set p = -1 for L infinity ball. (Default is 1.0.)
-         radius: float, Optional
-             (Default is 1.0.)
+    Args:
+        dimension: integer, Optional
+            The number of data points.
+        p: float, Optional
+            Set p = -1 for L infinity ball. (Default is 1.0.)
+        radius: float, Optional
+            (Default is 1.0.)
 
-     Methods:
-         linear_minimization_oracle(v: np.ndarray, x: np.ndarray)
-             Solves the linear minimization problem min_g in lp <v, g>.
-         membership_oracle(x,epsilon: float):
-             Determines whether x is in the feasible region, on the boundary, or exterior the feasible region.
-         initial_point()
-             Returns the initial vertex.
-     """
+    Methods:
+        linear_minimization_oracle(v: np.ndarray, x: np.ndarray)
+            Solves the linear minimization problem min_g in lp <v, g>.
+        membership_oracle(x,epsilon: float):
+            Determines whether x is in the feasible region, on the boundary, or exterior the feasible region.
+        initial_point()
+            Returns the initial vertex.
+    """
 
     def __init__(self, dimension: int = 400, p: float = 1.0, radius: float = 1.0):
         self.dimension = dimension
@@ -149,11 +149,11 @@ class LpBall:
             sign = np.sign(v[tmp_pos])
             fw_vertex = np.zeros(self.dimension)
             fw_vertex[tmp_pos] = - sign * self.radius
-            assert np.linalg.norm(fw_vertex, ord=1) <= 1, "p is not in the feasible region."
+            assert np.linalg.norm(fw_vertex, ord=1) <= self.radius, "p is not in the feasible region."
         elif self.p == -1:
             v = v.flatten()
             fw_vertex = -np.sign(v) * self.radius
-            assert (np.abs(fw_vertex) <= 1).all(), "p is not in the feasible region."
+            assert (np.abs(fw_vertex) <= self.radius).all(), "p is not in the feasible region."
 
         else:
             # The solution to min_||f||_p <= 1 <f,g> is given by f_i = g_i^{q-1}/||g||_q^{q-1}.
@@ -168,7 +168,7 @@ class LpBall:
 
     def membership_oracle(self, x: np.ndarray, epsilon: float = 10e-10):
         """Determines whether x is in the interior, boundary, or exterior of the feasible region."""
-        norm = lpnorm(x, 1)
+        norm = lpnorm(x, self.p)
         if abs(self.radius - norm) <= epsilon:
             return "boundary"
         elif (self.radius - norm) > epsilon:
